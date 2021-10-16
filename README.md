@@ -9,5 +9,5 @@ This is all of the components to drive and control the Self Driving Car I have c
  - World State
  
  # For Python
- - Within Folder 'Python Scripts'
+ - Within Folder 'Python'
    - TBC...
