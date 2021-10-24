@@ -12,6 +12,17 @@ public class WorldState : MonoBehaviour
     private float carSpeed;
     private float distanceInFront, distanceToLeft, distanceToRight, distanceDiagonalLeft, distanceDiagonalRight;
 
+    WebSocket socket;
+    void Start() {
+        socket = new WebSocket();
+        socket.Start();    
+    }
+
+    // Update is called once per frame
+    void Update() {
+
+    }
+
     public void IncreaseScoreDistance() {
         scoreDistance++;
         Debug.Log(scoreDistance);

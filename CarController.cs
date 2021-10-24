@@ -41,7 +41,7 @@ public class CarController : MonoBehaviour
         Car.centerOfMass = mass;
     }
 
-    private void FixedUpdate() {   
+    private void FixedUpdate() {
         float carSpeed = Car.velocity.magnitude;    
         if(carSpeed <= 20){
             maxSteerAngle = 40;
