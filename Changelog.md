@@ -1,7 +1,7 @@
 ###
 
 ### 24/10/2021
-Set up connection between Unity and Python using sockets
+ - Set up connection between Unity and Python using sockets
 
 
 ### 16/10/2021
