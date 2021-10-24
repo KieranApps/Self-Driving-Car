@@ -51,6 +51,9 @@ public class WebSocket
         }
         listener.Stop();
         Debug.LogError("Lost Connection...");
+        // Only let a certain amount of disconnects happen before closing the connection and not reopening
+        // The Python script will also give up forming a connection after too many tries
+        // The current generations run will have to be saved so it can be resumed, with which ever car was running, restarting its run
         if(disconnectCount < 10) {
             disconnectCount++;
             GetCon();
