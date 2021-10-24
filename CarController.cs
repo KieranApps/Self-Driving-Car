@@ -13,14 +13,14 @@ public class CarController : MonoBehaviour
 
     private WorldState WorldState;
 
+    private float MAX_STEER_ANGLE = 45;
+    private const float ENGINE_POWER = 1500;
+    
     private Rigidbody Car;
     private WheelCollider frontRight, frontLeft, rearRight, rearLeft;
     private Transform frontRightTrans, frontLeftTrans, rearRightTrans, rearLeftTrans;
 
     private MeshRenderer BrakeLights;
-
-    private float maxSteerAngle = 40;
-    private const float enginePower = 1500;
 
     private void Start() {
         WorldState = GameObject.Find("WorldState").GetComponent<WorldState>();
@@ -43,12 +43,14 @@ public class CarController : MonoBehaviour
 
     private void FixedUpdate() {
         float carSpeed = Car.velocity.magnitude;    
+        // Can remove these after NN is in use, since that can do 'analogue' turning
+        // It will have to be converted into a percentage of 45 (max angle) however, both positive and negative for Right and Left
         if(carSpeed <= 20){
-            maxSteerAngle = 40;
+            MAX_STEER_ANGLE = 45;
         }else if(carSpeed > 20 && carSpeed <= 40){
-            maxSteerAngle = 25;
+            MAX_STEER_ANGLE = 25;
         }else{
-            maxSteerAngle = 15;
+            MAX_STEER_ANGLE = 15;
         }
         WorldState.UpdateCarSpeed(carSpeed);
 
@@ -64,20 +66,18 @@ public class CarController : MonoBehaviour
     }
 
     private void Turn() {
-        steeringAngle = maxSteerAngle * horizontalInput;
+        steeringAngle = MAX_STEER_ANGLE * horizontalInput;
         frontLeft.steerAngle = steeringAngle;
         frontRight.steerAngle = steeringAngle;
     }
 
     private void Accelerate() {
         if(verticalInput >= 0){
-            Car.drag = 0.1f;
-            Car.angularDrag = 0.05f;
             BrakeLights.enabled = false;
             
             // Power the car
-            rearRight.motorTorque = verticalInput * enginePower;
-            rearLeft.motorTorque = verticalInput * enginePower;
+            rearRight.motorTorque = verticalInput * ENGINE_POWER;
+            rearLeft.motorTorque = verticalInput * ENGINE_POWER;
             
             // Remove any braking force
             frontLeft.brakeTorque = 0;

@@ -10,6 +10,7 @@ public class WorldState : MonoBehaviour
     private int time;
     private int scoreDistance = 0;
     private float carSpeed;
+    // List all sensor directions and angles
     private float distanceInFront, distanceToLeft, distanceToRight, distanceDiagonalLeft, distanceDiagonalRight;
 
     WebSocket socket;
@@ -20,7 +21,7 @@ public class WorldState : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-
+        
     }
 
     public void IncreaseScoreDistance() {

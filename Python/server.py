@@ -5,7 +5,7 @@ HOST = 'localhost'
 PORT = 9001
 # Denotes the end of the data
 DELIMITER = '|'
-# Start and end of the JSON object. A data set must have BOTH so we know that it is COMPLETE
+# Start and end of the JSON object. A data set must have BOTH so we know that it is complete
 START_SYMBOL = '{'
 END_SYMBOL = '}'
 
@@ -31,6 +31,7 @@ def processInputs(data):
 data = ''
 allData = False
 while hasConnection:
+    # Recieve a maximum amount of bytes
     rawData = socket.recv(1024).decode('utf-8')
     data += rawData
     if(data.__contains__(DELIMITER)):

@@ -29,6 +29,7 @@ public class WebSocket
         thread.Start();
     }
 
+// GetCon() and Connection() should be able to be removed form the final thing, just useful for now to test connection and data transfer
     public void GetCon() {
         
         address = IPAddress.Parse(HOST);
@@ -72,5 +73,14 @@ public class WebSocket
         string data = "{Hello}";
         byte[] buffer = Encoding.ASCII.GetBytes(data+DELIMITER);
         stream.Write(buffer, 0, buffer.Length);
+    }
+
+    //This will need to return the JSON object, or perhaps an array of the accel/brake and turn left/right
+    // Two values
+    public void GetCarInputs() {
+        NetworkStream stream = client.GetStream();
+        // Get JSON from Python and send those inputs back to the car controller
+        // No threading, and put a while loop to 'await' the response from the NN
+        // this will 'Freeze' unity until we get the response from python
     }
 }
