@@ -60,7 +60,6 @@ public class WorldState : MonoBehaviour
 
     public void IncreaseScoreDistance() {
         scoreDistance++;
-        Debug.Log(scoreDistance);
     }
 
     public void UpdateCarSpeed(float s) {
