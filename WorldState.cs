@@ -73,7 +73,7 @@ public class WorldState : MonoBehaviour
         Debug.Log("HIT THE TRACK");
         // Trigger the restart and get the next generated model. Wait for a response to pause the simulation until the new NN is loaded
         string nnStatus = socket.CarCrashed();
-
+        scoreDistance = 0;
         CarController.ResetCarPosition();
         state = "Running";
     }

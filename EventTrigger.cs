@@ -15,8 +15,6 @@ public class EventTrigger : MonoBehaviour
     private void OnTriggerEnter(Collider other) {
         if(other.GetComponent<Collider>().tag == "Marker"){
             WorldState.IncreaseScoreDistance();
-        }else if(other.GetComponent<Collider>().tag == "Finish"){
-            WorldState.EndWithFinshLine();
         }
     }
 
