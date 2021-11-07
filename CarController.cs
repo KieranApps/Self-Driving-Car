@@ -7,13 +7,13 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour
 {
-    private float horizontalInput;
-    private float verticalInput;
+    private float turnInput;
+    private float acceleratorInput;
     private float steeringAngle;
 
     private WorldState WorldState;
 
-    private float MAX_STEER_ANGLE = 45;
+    private const float MAX_STEER_ANGLE = 45;
     private const float ENGINE_POWER = 1500;
     
     private Rigidbody Car;
@@ -21,6 +21,11 @@ public class CarController : MonoBehaviour
     private Transform frontRightTrans, frontLeftTrans, rearRightTrans, rearLeftTrans;
 
     private MeshRenderer BrakeLights;
+
+    private class Inputs {
+        public float acceleratorInput;
+        public float turnInput;
+    }
 
     private void Start() {
         WorldState = GameObject.Find("WorldState").GetComponent<WorldState>();
@@ -41,57 +46,57 @@ public class CarController : MonoBehaviour
         Car.centerOfMass = mass;
     }
 
-    private void FixedUpdate() {
+    public void UpdateCar(string inputs) {
+        Inputs InputsObj = new Inputs();
         float carSpeed = Car.velocity.magnitude;    
-        // Can remove these after NN is in use, since that can do 'analogue' turning
-        // It will have to be converted into a percentage of 45 (max angle) however, both positive and negative for Right and Left
-        if(carSpeed <= 20){
-            MAX_STEER_ANGLE = 45;
-        }else if(carSpeed > 20 && carSpeed <= 40){
-            MAX_STEER_ANGLE = 25;
-        }else{
-            MAX_STEER_ANGLE = 15;
+        // GetInput();
+        try {
+            InputsObj = JsonUtility.FromJson<Inputs>(inputs);
+            turnInput = InputsObj.turnInput;
+            acceleratorInput = InputsObj.acceleratorInput;
+        } catch (System.Exception) {
+            turnInput = 0;
+            acceleratorInput = 0;
         }
-        WorldState.UpdateCarSpeed(carSpeed);
-
-        GetInput();
         Turn();
         Accelerate();
         UpdateWheelPositions();
+
+        WorldState.UpdateCarSpeed(carSpeed);
     }
 
     public void GetInput() {
-        horizontalInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
+        turnInput = Input.GetAxis("Horizontal");
+        acceleratorInput = Input.GetAxis("Vertical");
     }
 
     private void Turn() {
-        steeringAngle = MAX_STEER_ANGLE * horizontalInput;
+        steeringAngle = MAX_STEER_ANGLE * turnInput;
         frontLeft.steerAngle = steeringAngle;
         frontRight.steerAngle = steeringAngle;
     }
 
     private void Accelerate() {
-        if(verticalInput >= 0){
+        if(acceleratorInput >= 0){
             BrakeLights.enabled = false;
             
             // Power the car
-            rearRight.motorTorque = verticalInput * ENGINE_POWER;
-            rearLeft.motorTorque = verticalInput * ENGINE_POWER;
+            rearRight.motorTorque = acceleratorInput * ENGINE_POWER;
+            rearLeft.motorTorque = acceleratorInput * ENGINE_POWER;
             
             // Remove any braking force
             frontLeft.brakeTorque = 0;
             frontRight.brakeTorque = 0;
             rearLeft.brakeTorque = 0;
             rearRight.brakeTorque = 0;
-        }else if(verticalInput < 0){
+        }else if(acceleratorInput < 0){
             // Stop engine driving car
             rearRight.motorTorque = 0;
             rearLeft.motorTorque = 0;
 
             // Introduce braking force (Front brakes are stronger than rears)
-            frontLeft.brakeTorque = 1250;
-            frontRight.brakeTorque = 1250;
+            frontLeft.brakeTorque = 1000;
+            frontRight.brakeTorque = 1000;
             rearLeft.brakeTorque = 750;
             rearRight.brakeTorque = 750;
             
@@ -114,5 +119,19 @@ public class CarController : MonoBehaviour
 
         transform.position = position;
         transform.rotation = rotation;
+    }
+
+    public void ResetCarPosition() {
+        // Stop any physics acting on the car, so when it is reset back to the start position it will not behave strangely
+        Car.isKinematic = true;
+        turnInput = 0;
+        acceleratorInput = 0;
+        // Allow physics to act of the car again, so that it can drive as normal
+        Car.isKinematic = false;
+        
+        Vector3 position = WorldState.startPosition;
+        Quaternion rotation = WorldState.startRotation;
+        Car.position = position;
+        Car.rotation = rotation;
     }
 }

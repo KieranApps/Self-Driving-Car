@@ -1,5 +1,6 @@
 import json
 import socket
+import NeuralNetwork as NN
 
 HOST = 'localhost'
 PORT = 9001
@@ -11,28 +12,41 @@ END_SYMBOL = '}'
 
 # If the NN is in use, set this to true to prevent another process running. Unity will also be 'Frozen' While this process is running as to not miss frames
 neuralNetworkInUse = False
+neuralNetwork = NN.NeuralNetwork
+# Process the inputs from the Unity Project to select the option
+def processInputs(data):
+    jsonData = json.loads(data)
 
-socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    if('getInputs' in jsonData and jsonData['getInputs'] == True):
+        carInputs = neuralNetwork.processInputs(neuralNetwork, jsonData, DELIMITER)
+        sock.sendall(carInputs.encode())
 
+    elif ('reset' in jsonData and jsonData['reset']  == True):
+        status = neuralNetwork.reset(neuralNetwork, DELIMITER)
+        sock.sendall(status.encode())
+
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 hasConnection = False
+
 while not hasConnection:
     try:
-        socket.connect((HOST, PORT))
+        sock.connect((HOST, PORT))
         hasConnection = True
     except:
         print('Could not connect to Unity. Trying again...')
 
-def processInputs(data):
-
-    print('Got: ', data)
-    if(data != "{Hello}"):
-        raise Exception('AAAAAAAAAAAA')
-
+# Initialise the data
 data = ''
 allData = False
+# If the connection is lost, the Unity project stopped. So, stop the server
 while hasConnection:
     # Recieve a maximum amount of bytes
-    rawData = socket.recv(1024).decode('utf-8')
+    rawData = sock.recv(1024).decode('utf-8')
+    if(rawData == ''):
+        print('Closing')
+        sock.close()
+        hasConnection = False
     data += rawData
     if(data.__contains__(DELIMITER)):
         tempData = data.split(DELIMITER)
@@ -48,6 +62,3 @@ while hasConnection:
         processInputs(data)
         data = ''
         allData = False
-
-
-socket.close()

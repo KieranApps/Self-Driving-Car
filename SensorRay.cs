@@ -15,7 +15,7 @@ public class SensorRay : MonoBehaviour
         WorldState = GameObject.Find("WorldState").GetComponent<WorldState>();
     }
 
-    private void FixedUpdate() {
+    private void Update() {
         Ray ray = new Ray(transform.position, transform.forward);
         Debug.DrawRay(transform.position, transform.forward, Color.black);
         // Use RaycastAll in order to get the rays that go through each distance gate and hit the track
