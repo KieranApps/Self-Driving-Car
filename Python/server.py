@@ -22,7 +22,7 @@ def processInputs(data):
         sock.sendall(carInputs.encode())
 
     elif ('reset' in jsonData and jsonData['reset']  == True):
-        status = neuralNetwork.reset(neuralNetwork, DELIMITER)
+        status = neuralNetwork.reset(neuralNetwork, jsonData['time'], jsonData['distance'], DELIMITER)
         sock.sendall(status.encode())
 
 

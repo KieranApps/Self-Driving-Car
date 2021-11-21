@@ -24,6 +24,12 @@ public class WebSocket
     private string START_SYMBOL = "{";
     private string END_SYMBOL = "}";
 
+    public class DataToSend {
+        public bool reset = true;
+        public float time;
+        public float distance;
+    }
+
     // Start is called before the first frame update
     public void Start() {
         ThreadStart threadStart = new ThreadStart(GetCon);
@@ -67,8 +73,12 @@ public class WebSocket
         return processedData;
     }
 
-    public string CarCrashed() {
-        string data = "{\"reset\": true}";
+    public string CarCrashed(float time, int distance) {
+        DataToSend dataRaw = new DataToSend();
+        dataRaw.reset = true;
+        dataRaw.time = time;
+        dataRaw.distance = distance;
+        string data = JsonUtility.ToJson(dataRaw);
         byte[] buffer = Encoding.ASCII.GetBytes(data+DELIMITER);
         
         stream.Write(buffer, 0, buffer.Length);

@@ -11,7 +11,7 @@ public class WorldState : MonoBehaviour
     public Quaternion startRotation = Quaternion.identity;
     private string state;
     private CarController CarController;
-    private int time;
+    private float time;
     private int scoreDistance = 0;
     private float carSpeed;
     // List all sensor directions and angles
@@ -33,6 +33,7 @@ public class WorldState : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
+        time += Time.deltaTime;
         string inputs = "{\"acceleratorInput\": 0,\"turnInput\": 0}";
         if(state == "Running"){
             // Fill in the car data
@@ -71,8 +72,9 @@ public class WorldState : MonoBehaviour
         state = "Stopped";
         Debug.Log("HIT THE TRACK");
         // Trigger the restart and get the next generated model. Wait for a response to pause the simulation until the new NN is loaded
-        string nnStatus = socket.CarCrashed();
+        string nnStatus = socket.CarCrashed(time, scoreDistance);
         scoreDistance = 0;
+        time = 0;
         CarController.ResetCarPosition();
         state = "Running";
     }
