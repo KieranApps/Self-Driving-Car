@@ -12,17 +12,17 @@ END_SYMBOL = '}'
 
 # If the NN is in use, set this to true to prevent another process running. Unity will also be 'Frozen' While this process is running as to not miss frames
 neuralNetworkInUse = False
-neuralNetwork = NN.NeuralNetwork
+neuralNetwork = NN.NeuralNetwork()
 # Process the inputs from the Unity Project to select the option
 def processInputs(data):
     jsonData = json.loads(data)
 
     if('getInputs' in jsonData and jsonData['getInputs'] == True):
-        carInputs = neuralNetwork.processInputs(neuralNetwork, jsonData, DELIMITER)
+        carInputs = neuralNetwork.processInputs(jsonData, DELIMITER)
         sock.sendall(carInputs.encode())
 
     elif ('reset' in jsonData and jsonData['reset']  == True):
-        status = neuralNetwork.reset(neuralNetwork, jsonData['time'], jsonData['distance'], DELIMITER)
+        status = neuralNetwork.reset(jsonData['time'], jsonData['distance'], DELIMITER)
         sock.sendall(status.encode())
 
 

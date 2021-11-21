@@ -1,17 +1,24 @@
 import json
 import numpy as np
 
+import NetworkLayout as NL
+
 class NeuralNetwork():
 
     def __init__(self):
-        pass
+        self.networkLayout = NL.NetworkLayout()
     
     def reset(self, time, distance, DELIMITER):
-        print('Time', time)
-        print('Distance', distance)
-        # Load a new network OR perform cross over as part of the Genetic Algorithm at the end of the generation
+        # Find fitness of current Car in the generation, and save this to file
+
+        # Increase the car/Load a new network, OR, run crossover for a new generation (this includes picking parents and comparing the current best NN)
+        if(self.networkLayout.currentCar == 50):
+            print('Generation Finished. Perform Crossover.')
+        else:
+            self.networkLayout.currentCar += 1
+
         status = {
-            "reset": True
+            "finishedReset": True
         }
         return json.dumps(status) + DELIMITER
 

@@ -155,6 +155,6 @@ class NetworkLayout():
 
 
 # Run this file seperately to generate the initial random weights and biases
-NL = NetworkLayout()
-NL.loadNetwork()
+# NL = NetworkLayout()
+# NL.loadNetwork()
 # NL.createRandomValues()
