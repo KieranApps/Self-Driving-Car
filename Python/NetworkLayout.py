@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import math
 
 class NetworkLayout():
 
@@ -11,8 +12,19 @@ class NetworkLayout():
         self.hiddenLayerThreeSize = 5
         self.hiddenLayerFourSize = 3
 
+        # These will be the arrays of all weights and biases (more can be added or taken away to perfect layout)
+        self.weightsOne = []
+        self.biasesOne = []
+        self.weightsTwo = []
+        self.biasesTwo = []
+        self.weightsThree = []
+        self.biasesThree = []
+        self.weightsFour = []
+        self.biasesFour = []
+        self.weightsFive = []
+
         # This will be used to keep track of which NN we are currently using
-        self.currentGeneration = 1
+        self.currentCar = 1
 
         # There will be 250 cars per generation (250 csv files) and 2 files for the parents of the current running generation (just incase something goes wrong while generating, we can do it again)
         # And there will be 1 file that holds the current best (most fit) NN
@@ -57,21 +69,92 @@ class NetworkLayout():
                 weightsThree, biasesThree, weightsFour, biasesFour,
                 weightsFive, ['']
             ])
-            data.index = ['Weights_1','biasesOne','Weights_2','biasesTwo','Weights_3','biasesThree','Weights_4','biasesFour','Weights_5','FitnessValue']
+            data.index = ['Weights_1','Biases_1','Weights_2','Biases_2','Weights_3','Biases_3','Weights_4','Biases_4','Weights_5','FitnessValue']
             # All car networks are stored in the Car directory
             data.to_csv('./Cars/car' + str(i) + '.txt')
     
+    '''
+        loadNetwork loads a current network. All other Car/Generation handling (incrementing and if complete, starting crossover etc...) and checking for if the Car has alrady been evaluated
+        will be completed in seperate functions
+    '''
     def loadNetwork(self):
-        print('Loading New Network...')
+        # Remove the index tag, and all NaN values
+        def returnOnlyNumericValues(value):
+            valueAsFloat = ''
+            try:
+                valueAsFloat = float(value)
+            except:
+                valueAsFloat = math.nan
+            
+            return not math.isnan(valueAsFloat)
 
-    def saveNetwork(self):
-        print('Saving Networks...')
+        print('Loading New Network...')
+        network = pd.read_csv('./Cars/car' + str(self.currentCar) + '.txt')
+
+        for entry in np.asarray(network):
+            if entry[0] == 'Weights_1':
+                filteredValues = list(filter(returnOnlyNumericValues, entry))
+                self.weightsOne = filteredValues
+
+            elif entry[0] == 'Biases_1':
+                filteredValues = list(filter(returnOnlyNumericValues, entry))
+                self.biasesOne = filteredValues
+
+            elif entry[0] == 'Weights_2':
+                filteredValues = list(filter(returnOnlyNumericValues, entry))
+                self.weightsTwo = filteredValues
+
+            elif entry[0] == 'Biases_2':
+                filteredValues = list(filter(returnOnlyNumericValues, entry))
+                self.biasesTwo = filteredValues
+
+            elif entry[0] == 'Weights_3':
+                filteredValues = list(filter(returnOnlyNumericValues, entry))
+                self.weightsThree = filteredValues
+
+            elif entry[0] == 'Biases_3':
+                filteredValues = list(filter(returnOnlyNumericValues, entry))
+                self.biasesThree = filteredValues
+
+            elif entry[0] == 'Weights_4':
+                filteredValues = list(filter(returnOnlyNumericValues, entry))
+                self.weightsFour = filteredValues
+
+            elif entry[0] == 'Biases_4':
+                filteredValues = list(filter(returnOnlyNumericValues, entry))
+                self.biasesFour = filteredValues
+
+            elif entry[0] == 'Weights_5':
+                filteredValues = list(filter(returnOnlyNumericValues, entry))
+                self.weightsFive = filteredValues
+
+    def findFirstNotRunCar(self):
+        print('Finding Car to Start With...')
+
+    def findParents(self):
+        print('Finding Parents...')
+
+    def compareToBest(self):
+        print('Comparing to Best...')
+
+    def saveParentNetworks(self):
+        print('Saving Parent Networks...')
 
     def saveBestNetwork(self):
         print('Saving Best Network...')
+
+    def saveNewGenerationCar(self, carNumber):
+        print('Saving New Car...')
+
+    def saveFitnessValue(self, car, fitnessValue):
+        print('Saving Fitness...')
+
+    def isEndOfGeneration(self):
+        return self.currentCar == 250
 
 
 
 # Run this file seperately to generate the initial random weights and biases
 NL = NetworkLayout()
-NL.createRandomValues()
+NL.loadNetwork()
+# NL.createRandomValues()
