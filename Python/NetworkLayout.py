@@ -26,7 +26,7 @@ class NetworkLayout():
         # This will be used to keep track of which NN we are currently using
         self.currentCar = 1
 
-        # There will be 250 cars per generation (250 csv files) and 2 files for the parents of the current running generation (just incase something goes wrong while generating, we can do it again)
+        # There will be 50 cars per generation (50 csv files) and 2 files for the parents of the current running generation (just incase something goes wrong while generating, we can do it again)
         # And there will be 1 file that holds the current best (most fit) NN
         # A total of 253 sheets
 
@@ -34,9 +34,9 @@ class NetworkLayout():
         print('Creating Networks...')
         
         # There are 10 inputs, and the first hidden layer has to have layerSize^10 connections, and then layerSize^prevLayerSize
-        # Create 250 networks, so that per generation there are 250 cars
+        # Create 50 networks, so that per generation there are 50 cars
         # Use index start of 1 for easy reading and understanding
-        for i in range(1, 251):
+        for i in range(1, 51):
             # Since its easier to store and read multiple 1D arrays in a csv, they will be used, rather than a 2d array for the hidden nodes
             # These could potentially be converted into a 2d array upon loading and for use in processing, however, depending on performance gains
 
@@ -150,7 +150,7 @@ class NetworkLayout():
         print('Saving Fitness...')
 
     def isEndOfGeneration(self):
-        return self.currentCar == 250
+        return self.currentCar == 50
 
 
 
