@@ -13,3 +13,8 @@ Some Assets will be saved here to prevent having to remake then in the event the
  - Within Folder 'Python'
    - server.py
    - NeuralNetwork.py
+   - NetworkLayout.py
+   - Cars
+     - All current generation car Neural Network layouts
+     - Current Best car
+     - Current generations Parents 
