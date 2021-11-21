@@ -39,6 +39,7 @@ while not hasConnection:
 # Initialise the data
 data = ''
 allData = False
+# Start the Unity Simulation first (since its a large project it causes issues the other way around)
 # If the connection is lost, the Unity project stopped. So, stop the server
 while hasConnection:
     # Recieve a maximum amount of bytes
