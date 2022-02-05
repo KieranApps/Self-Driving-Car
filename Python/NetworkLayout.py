@@ -1,6 +1,5 @@
-import pandas as pd
 import numpy as np
-import math
+import json
 
 class NetworkLayout():
 
@@ -22,6 +21,7 @@ class NetworkLayout():
         self.weightsFour = []
         self.biasesFour = []
         self.weightsFive = []
+        self.biasesFive = []
 
         # This will be used to keep track of which NN we are currently using
         self.currentCar = 1
@@ -37,96 +37,68 @@ class NetworkLayout():
         # Create 50 networks, so that per generation there are 50 cars
         # Use index start of 1 for easy reading and understanding
         for i in range(1, 51):
-            # Since its easier to store and read multiple 1D arrays in a csv, they will be used, rather than a 2d array for the hidden nodes
-            # These could potentially be converted into a 2d array upon loading and for use in processing, however, depending on performance gains
-
-            # 2d/3d array example
-            # [
-            #   [ <-- Denotes layer 1
-            #       [bias, weight, weight], <- bias of current node, one weight for each node in the next layer (could split biases out and just have 2d of weights for easier understanding)
-            #       [bias, weight, weight], <- same as above, node bias with weights to all next layer nodes
-            #   ],
-            #   [...Layer 2...],
-            #   []...
-            # ]
-            weightsOne = np.random.rand(self.inputSize * self.hiddenLayerOneSize)
+            weightsOne = []
+            for j in range(0, self.hiddenLayerOneSize - 1):
+                weightsOne.append(np.random.rand(self.inputSize).tolist())
             biasesOne = np.random.rand(self.hiddenLayerOneSize)
 
-            weightsTwo = np.random.rand(self.hiddenLayerOneSize * self.hiddenLayerTwoSize)
+            weightsTwo = []
+            for j in range(0, self.hiddenLayerTwoSize - 1):
+                weightsTwo.append(np.random.rand(self.hiddenLayerOneSize).tolist())
             biasesTwo = np.random.rand(self.hiddenLayerTwoSize)
 
-            weightsThree = np.random.rand(self.hiddenLayerTwoSize * self.hiddenLayerThreeSize)
+            weightsThree = []
+            for j in range(0, self.hiddenLayerThreeSize - 1):
+                weightsThree.append(np.random.rand(self.hiddenLayerTwoSize).tolist())
             biasesThree = np.random.rand(self.hiddenLayerThreeSize)
 
-            weightsFour = np.random.rand(self.hiddenLayerThreeSize * self.hiddenLayerFourSize)
+            weightsFour = []
+            for j in range(0, self.hiddenLayerFourSize - 1):
+                weightsFour.append(np.random.rand(self.hiddenLayerThreeSize).tolist())
             biasesFour = np.random.rand(self.hiddenLayerFourSize)
 
             # Output will be of two so that there is the acceleration value turn angle
-            weightsFive = np.random.rand(self.hiddenLayerFourSize * 2)
+            weightsFive = []
+            for j in range(0, 2):
+                weightsFive.append(np.random.rand(self.hiddenLayerFourSize).tolist())
+            biasesFive = np.random.rand(2)
 
-            data = pd.DataFrame([
-                weightsOne, biasesOne, weightsTwo, biasesTwo,
-                weightsThree, biasesThree, weightsFour, biasesFour,
-                weightsFive, ['']
-            ])
-            data.index = ['Weights_1','Biases_1','Weights_2','Biases_2','Weights_3','Biases_3','Weights_4','Biases_4','Weights_5','FitnessValue']
-            # All car networks are stored in the Car directory
-            data.to_csv('./Cars/car' + str(i) + '.txt')
+            carData = {
+                "weightsOne": weightsOne,
+                "biasesOne": biasesOne.tolist(),
+                "weightsTwo": weightsTwo,
+                "biasesTwo": biasesTwo.tolist(),
+                "weightsThree": weightsThree,
+                "biasesThree": biasesThree.tolist(),
+                "weightsFour": weightsFour,
+                "biasesFour": biasesFour.tolist(),
+                "weightsFive": weightsFive,
+                "biasesFive": biasesFive.tolist(),
+                "fitnessValue": None
+            }
+
+            # Format json 
+            formattedCarObject = json.dumps(carData, indent = 4)
+            with open('./Cars/car' + str(i) + '.json', 'w') as carFile:
+                carFile.write(formattedCarObject)
     
     '''
         loadNetwork loads a current network. All other Car/Generation handling (incrementing and if complete, starting crossover etc...) and checking for if the Car has alrady been evaluated
         will be completed in seperate functions
     '''
     def loadNetwork(self):
-        # Remove the index tag, and all NaN values
-        def returnOnlyNumericValues(value):
-            valueAsFloat = ''
-            try:
-                valueAsFloat = float(value)
-            except:
-                valueAsFloat = math.nan
-            
-            return not math.isnan(valueAsFloat)
-
         print('Loading New Network...')
-        network = pd.read_csv('./Cars/car' + str(self.currentCar) + '.txt')
+        with open('./Cars/car' + str(self.currentCar) + '.json') as carFile:
+            carObject = json.load(carFile)
 
-        for entry in np.asarray(network):
-            if entry[0] == 'Weights_1':
-                filteredValues = list(filter(returnOnlyNumericValues, entry))
-                self.weightsOne = filteredValues
-
-            elif entry[0] == 'Biases_1':
-                filteredValues = list(filter(returnOnlyNumericValues, entry))
-                self.biasesOne = filteredValues
-
-            elif entry[0] == 'Weights_2':
-                filteredValues = list(filter(returnOnlyNumericValues, entry))
-                self.weightsTwo = filteredValues
-
-            elif entry[0] == 'Biases_2':
-                filteredValues = list(filter(returnOnlyNumericValues, entry))
-                self.biasesTwo = filteredValues
-
-            elif entry[0] == 'Weights_3':
-                filteredValues = list(filter(returnOnlyNumericValues, entry))
-                self.weightsThree = filteredValues
-
-            elif entry[0] == 'Biases_3':
-                filteredValues = list(filter(returnOnlyNumericValues, entry))
-                self.biasesThree = filteredValues
-
-            elif entry[0] == 'Weights_4':
-                filteredValues = list(filter(returnOnlyNumericValues, entry))
-                self.weightsFour = filteredValues
-
-            elif entry[0] == 'Biases_4':
-                filteredValues = list(filter(returnOnlyNumericValues, entry))
-                self.biasesFour = filteredValues
-
-            elif entry[0] == 'Weights_5':
-                filteredValues = list(filter(returnOnlyNumericValues, entry))
-                self.weightsFive = filteredValues
+        self.weightsOne = carObject['weightsOne']
+        self.weightsTwo = carObject['weightsTwo']
+        self.biasesTwo = carObject['biasesTwo']
+        self.weightsThree = carObject['weightsThree']
+        self.biasesThree = carObject['biasesThree']
+        self.weightsFour = carObject['weightsFour']
+        self.biasesFour = carObject['biasesFour']
+        self.weightsFive = carObject['weightsFive']
 
     def findFirstNotRunCar(self):
         print('Finding Car to Start With...')
@@ -149,12 +121,16 @@ class NetworkLayout():
     def saveFitnessValue(self, car, fitnessValue):
         print('Saving Fitness...')
 
+    def loadAllNetworks(self):
+        print('Loading all Networks for Crossover...')
+        # Return all as Large JSON Object with key being file name (car number)
+
     def isEndOfGeneration(self):
         return self.currentCar == 50
 
 
 
 # Run this file seperately to generate the initial random weights and biases
-# NL = NetworkLayout()
-# NL.loadNetwork()
-# NL.createRandomValues()
+NL = NetworkLayout()
+NL.loadNetwork()
+#NL.createRandomValues()

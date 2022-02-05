@@ -64,7 +64,7 @@ public class WorldState : MonoBehaviour
     }
 
     public void UpdateCarSpeed(float s) {
-        float carSpeed = s;
+        carSpeed = s;
     }
 
     // These two ends might just be the same thing in the end

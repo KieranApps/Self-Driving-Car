@@ -55,6 +55,7 @@ public class WebSocket
         if(client == null){
             return "Client Not Found";
         }
+
         byte[] sendBuffer = Encoding.ASCII.GetBytes(jsonDataToSend+DELIMITER);
         stream.Write(sendBuffer, 0, sendBuffer.Length);
 

@@ -15,6 +15,8 @@ public class CarController : MonoBehaviour
 
     private const float MAX_STEER_ANGLE = 45;
     private const float ENGINE_POWER = 1500;
+    private const float FRONT_BRAKE_POWER = 1000;
+    private const float REAR_BRAKE_POWER = 750;
     
     private Rigidbody Car;
     private WheelCollider frontRight, frontLeft, rearRight, rearLeft;
@@ -95,10 +97,10 @@ public class CarController : MonoBehaviour
             rearLeft.motorTorque = 0;
 
             // Introduce braking force (Front brakes are stronger than rears)
-            frontLeft.brakeTorque = 1000;
-            frontRight.brakeTorque = 1000;
-            rearLeft.brakeTorque = 750;
-            rearRight.brakeTorque = 750;
+            frontLeft.brakeTorque = acceleratorInput * FRONT_BRAKE_POWER;
+            frontRight.brakeTorque = acceleratorInput * FRONT_BRAKE_POWER;
+            rearLeft.brakeTorque = acceleratorInput * REAR_BRAKE_POWER;
+            rearRight.brakeTorque = acceleratorInput * REAR_BRAKE_POWER;
             
             BrakeLights.enabled = true;
         }
