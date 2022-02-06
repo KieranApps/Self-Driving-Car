@@ -11,9 +11,9 @@ public class WorldState : MonoBehaviour
     public Quaternion startRotation = Quaternion.identity;
     private string state;
     private CarController CarController;
-    private float time;
+    public float time;
     private int scoreDistance = 0;
-    private float carSpeed;
+    public float carSpeed;
     // List all sensor directions and angles
     private float distanceInFront, distanceToLeft, distance23Left, distance45Left, distance68Left, distanceToRight, distance23Right, distance45Right, distance68Right;
 

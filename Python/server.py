@@ -1,5 +1,6 @@
 import json
 import socket
+import time
 import NeuralNetwork as NN
 
 HOST = 'localhost'

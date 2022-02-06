@@ -49,6 +49,9 @@ public class CarController : MonoBehaviour
     }
 
     public void UpdateCar(string inputs) {
+        if(WorldState.time > 20 && ((Car.position == WorldState.startPosition || WorldState.carSpeed < 0.01))){
+            WorldState.EndWithCrash();
+        }
         Inputs InputsObj = new Inputs();
         float carSpeed = Car.velocity.magnitude;    
         // GetInput();

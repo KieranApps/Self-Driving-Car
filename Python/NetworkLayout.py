@@ -10,7 +10,8 @@ class NetworkLayout():
         self.hiddenLayerTwoSize = 7
         self.hiddenLayerThreeSize = 5
         self.hiddenLayerFourSize = 3
-
+        self.outputLayerSize = 2
+        
         # These will be the arrays of all weights and biases (more can be added or taken away to perfect layout)
         self.weightsOne = []
         self.biasesOne = []
@@ -38,30 +39,30 @@ class NetworkLayout():
         # Use index start of 1 for easy reading and understanding
         for i in range(1, 51):
             weightsOne = []
-            for j in range(0, self.hiddenLayerOneSize - 1):
-                weightsOne.append(np.random.rand(self.inputSize).tolist())
-            biasesOne = np.random.rand(self.hiddenLayerOneSize)
+            for j in range(0, self.hiddenLayerOneSize):
+                weightsOne.append(np.random.uniform(-1, 1, self.inputSize).tolist())
+            biasesOne = np.random.uniform(-1, 1, self.hiddenLayerOneSize)
 
             weightsTwo = []
-            for j in range(0, self.hiddenLayerTwoSize - 1):
-                weightsTwo.append(np.random.rand(self.hiddenLayerOneSize).tolist())
-            biasesTwo = np.random.rand(self.hiddenLayerTwoSize)
+            for j in range(0, self.hiddenLayerTwoSize):
+                weightsTwo.append(np.random.uniform(-1, 1, self.hiddenLayerOneSize).tolist())
+            biasesTwo = np.random.uniform(-1, 1, self.hiddenLayerTwoSize)
 
             weightsThree = []
-            for j in range(0, self.hiddenLayerThreeSize - 1):
-                weightsThree.append(np.random.rand(self.hiddenLayerTwoSize).tolist())
-            biasesThree = np.random.rand(self.hiddenLayerThreeSize)
+            for j in range(0, self.hiddenLayerThreeSize):
+                weightsThree.append(np.random.uniform(-1, 1, self.hiddenLayerTwoSize).tolist())
+            biasesThree = np.random.uniform(-1, 1, self.hiddenLayerThreeSize)
 
             weightsFour = []
-            for j in range(0, self.hiddenLayerFourSize - 1):
-                weightsFour.append(np.random.rand(self.hiddenLayerThreeSize).tolist())
-            biasesFour = np.random.rand(self.hiddenLayerFourSize)
+            for j in range(0, self.hiddenLayerFourSize):
+                weightsFour.append(np.random.uniform(-1, 1, self.hiddenLayerThreeSize).tolist())
+            biasesFour = np.random.uniform(-1, 1, self.hiddenLayerFourSize)
 
             # Output will be of two so that there is the acceleration value turn angle
             weightsFive = []
             for j in range(0, 2):
-                weightsFive.append(np.random.rand(self.hiddenLayerFourSize).tolist())
-            biasesFive = np.random.rand(2)
+                weightsFive.append(np.random.uniform(-1, 1, self.hiddenLayerFourSize).tolist())
+            biasesFive = np.random.uniform(-1, 1, 2)
 
             carData = {
                 "weightsOne": weightsOne,
@@ -74,10 +75,10 @@ class NetworkLayout():
                 "biasesFour": biasesFour.tolist(),
                 "weightsFive": weightsFive,
                 "biasesFive": biasesFive.tolist(),
-                "fitnessValue": None
+                "fitnessValue": 0
             }
 
-            # Format json 
+            # Format json
             formattedCarObject = json.dumps(carData, indent = 4)
             with open('./Cars/car' + str(i) + '.json', 'w') as carFile:
                 carFile.write(formattedCarObject)
@@ -87,18 +88,20 @@ class NetworkLayout():
         will be completed in seperate functions
     '''
     def loadNetwork(self):
-        print('Loading New Network...')
+        print('Loading New Network...', self.currentCar)
         with open('./Cars/car' + str(self.currentCar) + '.json') as carFile:
             carObject = json.load(carFile)
 
-        self.weightsOne = carObject['weightsOne']
-        self.weightsTwo = carObject['weightsTwo']
-        self.biasesTwo = carObject['biasesTwo']
-        self.weightsThree = carObject['weightsThree']
-        self.biasesThree = carObject['biasesThree']
-        self.weightsFour = carObject['weightsFour']
-        self.biasesFour = carObject['biasesFour']
-        self.weightsFive = carObject['weightsFive']
+        self.weightsOne = np.array(carObject['weightsOne'])
+        self.biasesOne = np.array(carObject['biasesOne'])
+        self.weightsTwo = np.array(carObject['weightsTwo'])
+        self.biasesTwo = np.array(carObject['biasesTwo'])
+        self.weightsThree = np.array(carObject['weightsThree'])
+        self.biasesThree = np.array(carObject['biasesThree'])
+        self.weightsFour = np.array(carObject['weightsFour'])
+        self.biasesFour = np.array(carObject['biasesFour'])
+        self.weightsFive = np.array(carObject['weightsFive'])
+        self.biasesFive = np.array(carObject['biasesFive'])
 
     def findFirstNotRunCar(self):
         print('Finding Car to Start With...')
@@ -118,8 +121,26 @@ class NetworkLayout():
     def saveNewGenerationCar(self, carNumber):
         print('Saving New Car...')
 
-    def saveFitnessValue(self, car, fitnessValue):
+    def saveFitnessValue(self, fitness):
         print('Saving Fitness...')
+        carData = {
+            "weightsOne": self.weightsOne.tolist(),
+            "biasesOne": self.biasesOne.tolist(),
+            "weightsTwo": self.weightsTwo.tolist(),
+            "biasesTwo": self.biasesTwo.tolist(),
+            "weightsThree": self.weightsThree.tolist(),
+            "biasesThree": self.biasesThree.tolist(),
+            "weightsFour": self.weightsFour.tolist(),
+            "biasesFour": self.biasesFour.tolist(),
+            "weightsFive": self.weightsFive.tolist(),
+            "biasesFive": self.biasesFive.tolist(),
+            "fitnessValue": fitness
+        }
+        # Format json
+        formattedCarObject = json.dumps(carData, indent = 4)
+        with open('./Cars/car' + str(self.currentCar) + '.json', 'w') as carFile:
+            carFile.write(formattedCarObject)
+        
 
     def loadAllNetworks(self):
         print('Loading all Networks for Crossover...')
@@ -131,6 +152,6 @@ class NetworkLayout():
 
 
 # Run this file seperately to generate the initial random weights and biases
-NL = NetworkLayout()
-NL.loadNetwork()
+#NL = NetworkLayout()
+#NL.loadNetwork()
 #NL.createRandomValues()
