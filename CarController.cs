@@ -100,10 +100,10 @@ public class CarController : MonoBehaviour
             rearLeft.motorTorque = 0;
 
             // Introduce braking force (Front brakes are stronger than rears)
-            frontLeft.brakeTorque = acceleratorInput * FRONT_BRAKE_POWER;
-            frontRight.brakeTorque = acceleratorInput * FRONT_BRAKE_POWER;
-            rearLeft.brakeTorque = acceleratorInput * REAR_BRAKE_POWER;
-            rearRight.brakeTorque = acceleratorInput * REAR_BRAKE_POWER;
+            frontLeft.brakeTorque = - acceleratorInput * FRONT_BRAKE_POWER;
+            frontRight.brakeTorque = - acceleratorInput * FRONT_BRAKE_POWER;
+            rearLeft.brakeTorque = - acceleratorInput * REAR_BRAKE_POWER;
+            rearRight.brakeTorque = - acceleratorInput * REAR_BRAKE_POWER;
             
             BrakeLights.enabled = true;
         }

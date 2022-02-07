@@ -4,12 +4,12 @@ import math
 
 import NetworkLayout as NL
 
-POTENTIAL_MAX_SPEED = 50
-POTENTIAL_MAX_FRONT = 300
-POTENTIAL_MAX_LEFT_RIGHT = 15
-POTENTIAL_MAX_23 = 250
-POTENTIAL_MAX_45 = 150
-POTENTIAL_MAX_68 = 100
+POTENTIAL_MAX_SPEED = 65
+POTENTIAL_MAX_FRONT = 400 # Longest straights
+POTENTIAL_MAX_LEFT_RIGHT = 10 # Track width
+POTENTIAL_MAX_23 = 250 # Max distance will be hit going around a corner, and onto a long straight
+POTENTIAL_MAX_45 = 250 # Max distance will be hit going around a corner, and onto a long straight
+POTENTIAL_MAX_68 = 250 # Max distance will be hit going around a corner, and onto a long straight
 
 class NeuralNetwork():
     def __init__(self):
@@ -46,16 +46,16 @@ class NeuralNetwork():
     def forwardPass(self,  jsonData):
         # Pull jsonData out into variables.
         # Normalize inputs
-        speed = (round(jsonData['speed'], 4)) / (POTENTIAL_MAX_SPEED)
-        distanceToFront = round(jsonData['distanceInFront'], 4) / (POTENTIAL_MAX_FRONT)
-        distanceToLeft = round(jsonData['distanceToLeft'], 4) / (POTENTIAL_MAX_LEFT_RIGHT)
-        distance23Left = round(jsonData['distance23Left'], 4) / (POTENTIAL_MAX_23)
-        distance45Left = round(jsonData['distance45Left'], 4) / (POTENTIAL_MAX_45)
-        distance68Left = round(jsonData['distance68Left'], 4) / (POTENTIAL_MAX_68)
-        distanceToRight = round(jsonData['distanceToRight'], 4) / (POTENTIAL_MAX_LEFT_RIGHT)
-        distance23Right = round(jsonData['distance23Right'], 4) / (POTENTIAL_MAX_23)
-        distance45Right = round(jsonData['distance45Right'], 4) / (POTENTIAL_MAX_45)
-        distance68Right = round(jsonData['distance68Right'], 4) / (POTENTIAL_MAX_68)
+        speed = jsonData['speed'] / POTENTIAL_MAX_SPEED
+        distanceToFront = jsonData['distanceInFront'] / POTENTIAL_MAX_FRONT
+        distanceToLeft = jsonData['distanceToLeft'] / POTENTIAL_MAX_LEFT_RIGHT
+        distance23Left = jsonData['distance23Left'] / POTENTIAL_MAX_23
+        distance45Left = jsonData['distance45Left'] / POTENTIAL_MAX_45
+        distance68Left = jsonData['distance68Left'] / POTENTIAL_MAX_68
+        distanceToRight = jsonData['distanceToRight'] / POTENTIAL_MAX_LEFT_RIGHT
+        distance23Right = jsonData['distance23Right'] / POTENTIAL_MAX_23
+        distance45Right = jsonData['distance45Right'] / POTENTIAL_MAX_45
+        distance68Right = jsonData['distance68Right'] / POTENTIAL_MAX_68
         
 
         inputArray = np.array([speed, distanceToFront, distanceToLeft, distance23Left, distance45Left, distance68Left, distanceToRight, distance23Right, distance45Right, distance68Right])

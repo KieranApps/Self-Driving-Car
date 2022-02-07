@@ -1,5 +1,10 @@
 ###
 
+### 07/02/2022
+ - Fixed some small bugs
+    - Distance measure
+    - Sensors being on wrong side
+
 ### 05/02/2022
  - Added forward pass of neural network to controll car
  - Added fitness evalutation (Average Speed i.e (ditance gates hit / time taken))

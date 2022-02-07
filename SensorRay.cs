@@ -22,7 +22,7 @@ public class SensorRay : MonoBehaviour
         RaycastHit[] hits = Physics.RaycastAll(ray);
         // Find the ray that hit the track from all rays
         for(int i = 0; i < hits.Length; i++){
-            if(hits[i].collider.tag == "Track"){
+            if(hits[i].collider.tag == "Track" && hits[i].collider.gameObject.name == "Plane"){
                 // Send the distance to the Wolrd controller to the have that send it to the NN to get the appropriate input back
                 WorldState.UpdateDistances(Sensor.tag, hits[i].distance);
             }
