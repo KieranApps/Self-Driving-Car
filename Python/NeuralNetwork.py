@@ -1,4 +1,5 @@
 import json
+from random import random
 import numpy as np
 import math
 
@@ -21,8 +22,13 @@ class NeuralNetwork():
         # Find fitness of current Car in the generation, and save this to file
 
         # Increase the car/Load a new network, OR, run crossover for a new generation (this includes picking parents and comparing the current best NN)
-        if(self.networkLayout.currentCar == 50):
-            print('Generation Finished. Perform Crossover.')
+        if(self.networkLayout.isEndOfGeneration()):
+            print('Generation Finished. Find Parents.')
+            self.networkLayout.findParents()
+            if self.networkLayout.stopTraining == True:
+                return True
+
+            self.performCrossover()
         else:
             self.findFitness(time, distance)
             self.networkLayout.currentCar += 1
@@ -107,5 +113,32 @@ class NeuralNetwork():
         self.networkLayout.saveFitnessValue(carFitness)
 
     def performCrossover(self):
-        allNetworks = self.networkLayout.loadAllNetworks()
-        print()
+        print('Performing Crossover...')
+        # This function will be the one to run the genetic algorithm of mixing other NNs when implemented
+        # Only need two parents, from the network layout (can use local variable, or load in from file)
+        parentOne = {}
+        parentTwo = {}
+        with open('./Cars/parentOne.json') as parentOneFile:
+                parentOne = json.load(parentOneFile)
+        with open('./Cars/parentTwo.json') as parentTwoFile:
+                parentTwo = json.load(parentTwoFile)
+        for i in range(1, self.generationSize + 1):
+            print('Get the parents and crossover')
+            layerChoseToSplit = random.randrange(1, 6) # Needs to be 6, so 5 can be chosen. Just how python works
+            biasesOrWeightsToSplit = random.randrange(1, 3)
+
+            # After, then select a ranum number up to the size of the layer chosen 
+                # i.e 10 for biases on One, or 10*10 for weightsOne, or 10*7 for weightsTwo etc
+                # Should be able to use array lengths to find exacts. i.e, length of array of arrays, length of each array within array. Times together
+                # Or can use same way as used for generation, should work also. Just means more changes if layout changes
+
+            
+            # Then pick either parent to be slit for first half, other parent split for second 
+
+
+            # Split the parents along this set. Randomly pick either parent 1 or 2 to be the first 'half' and second 'half'?
+            # OR Pick the parent One to be the bigger side
+
+            # Merge the two sets
+
+            # Randomly generate a number, to determine weather we mutate a value
