@@ -1,5 +1,8 @@
 ###
 
+### 12/02/2022
+ - Added ability to pick parents and find current overall best car
+
 ### 07/02/2022
  - Fixed some small bugs
     - Distance measure
