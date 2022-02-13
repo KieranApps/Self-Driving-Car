@@ -1,5 +1,8 @@
 ###
 
+### 13/02/2022
+ - Added Genetic Algorithm and Mutation
+
 ### 12/02/2022
  - Added ability to pick parents and find current overall best car
 
