@@ -65,7 +65,7 @@ class NetworkLayout():
 
             # Output will be of two so that there is the acceleration value turn angle
             weightsFive = []
-            for j in range(0, 2):
+            for j in range(0, self.outputLayerSize):
                 weightsFive.append(np.random.uniform(-1, 1, self.hiddenLayerFourSize).tolist())
             biasesFive = np.random.uniform(-1, 1, 2)
 
@@ -87,6 +87,12 @@ class NetworkLayout():
             formattedCarObject = json.dumps(carData, indent = 4)
             with open('./Cars/car' + str(i) + '.json', 'w') as carFile:
                 carFile.write(formattedCarObject)
+            initGen = {
+                "generation": 1
+            }
+            formattedInitGen = json.dumps(initGen, indent = 4)
+            with open('./Cars/generations_counter.json', 'w') as genFile:
+                genFile.write(formattedInitGen)
     
     '''
         loadNetwork loads a current network. All other Car/Generation handling (incrementing and if complete, starting crossover etc...) and checking for if the Car has alrady been evaluated
@@ -185,9 +191,6 @@ class NetworkLayout():
         else:
             self.currentNotBetterThanBest += 1
 
-    def saveNewGenerationCar(self, carNumber):
-        print('Saving New Car...')
-
     def saveFitnessValue(self, fitness):
         print('Saving Fitness...')
         carData = {
@@ -207,11 +210,6 @@ class NetworkLayout():
         formattedCarObject = json.dumps(carData, indent = 4)
         with open('./Cars/car' + str(self.currentCar) + '.json', 'w') as carFile:
             carFile.write(formattedCarObject)
-        
-
-    def loadAllNetworks(self):
-        print('Loading all Networks for Crossover...')
-        # Return all as Large JSON Object with key being file name (car number)
 
     def isEndOfGeneration(self):
         return self.currentCar == self.generationSize

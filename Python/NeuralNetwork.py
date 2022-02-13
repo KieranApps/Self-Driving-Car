@@ -1,5 +1,5 @@
 import json
-from random import random
+import random
 import numpy as np
 import math
 
@@ -17,6 +17,7 @@ class NeuralNetwork():
         self.networkLayout = NL.NetworkLayout()
         # self.networkLayout.findFirstNotRunCar()
         self.networkLayout.loadNetwork()
+        self.mutatePercentage = 101
 
     def reset(self, time, distance, DELIMITER):
         # Find fitness of current Car in the generation, and save this to file
@@ -29,6 +30,8 @@ class NeuralNetwork():
                 return True
 
             self.performCrossover()
+            self.networkLayout.currentCar = 1
+            self.networkLayout.loadNetwork()
         else:
             self.findFitness(time, distance)
             self.networkLayout.currentCar += 1
@@ -122,23 +125,178 @@ class NeuralNetwork():
                 parentOne = json.load(parentOneFile)
         with open('./Cars/parentTwo.json') as parentTwoFile:
                 parentTwo = json.load(parentTwoFile)
-        for i in range(1, self.generationSize + 1):
-            print('Get the parents and crossover')
-            layerChoseToSplit = random.randrange(1, 6) # Needs to be 6, so 5 can be chosen. Just how python works
-            biasesOrWeightsToSplit = random.randrange(1, 3)
 
-            # After, then select a ranum number up to the size of the layer chosen 
-                # i.e 10 for biases on One, or 10*10 for weightsOne, or 10*7 for weightsTwo etc
-                # Should be able to use array lengths to find exacts. i.e, length of array of arrays, length of each array within array. Times together
-                # Or can use same way as used for generation, should work also. Just means more changes if layout changes
+        # Use Uniform Crossover
+        # 50/50 Probability if the current individual weight or bias is taken from parent one or two
+        for i in range(1, self.networkLayout.generationSize + 1):            
+            weightsOne = [[-1 for n in range(self.networkLayout.inputSize)] for m in range(self.networkLayout.hiddenLayerOneSize)]
+            weightsTwo = [[-1 for n in range(self.networkLayout.hiddenLayerOneSize)] for m in range(self.networkLayout.hiddenLayerTwoSize)]
+            weightsThree = [[-1 for n in range(self.networkLayout.hiddenLayerTwoSize)] for m in range(self.networkLayout.hiddenLayerThreeSize)]
+            weightsFour = [[-1 for n in range(self.networkLayout.hiddenLayerThreeSize)] for m in range(self.networkLayout.hiddenLayerFourSize)]
+            weightsFive = [[-1 for n in range(self.networkLayout.hiddenLayerFourSize)] for m in range(self.networkLayout.outputLayerSize)]
 
+            biasesOne = []
+            biasesTwo = []
+            biasesThree = []
+            biasesFour = []
+            biasesFive = []
+
+            # First Layer
+            for j in range(0, self.networkLayout.hiddenLayerOneSize):
+                mutateProbBias = random.randrange(1, self.mutatePercentage) # We want a 1% chance of mutation, so 1 to 100, and if it is 1, we mutate the individual value
+                if mutateProbBias == 1:
+                    newNum = np.random.uniform(-1, 1, 1)[0]
+                    biasesOne.append(newNum)
+                else:
+                    biasProb = random.randrange(1, 11)
+                    if biasProb > 5:
+                        # Take parent 1
+                        biasesOne.append(parentOne['biasesOne'][j])
+                    else:
+                        # Take parent 2
+                        biasesOne.append(parentTwo['biasesOne'][j])
+
+                # Create the weights array
+                for k in range(0, self.networkLayout.inputSize):
+                    mutateProbWeight = random.randrange(1, self.mutatePercentage)
+                    if mutateProbWeight == 1:
+                        newNum = np.random.uniform(-1, 1, 1)[0]
+                        weightsOne[j][k] = newNum
+                    else:
+                        weightsProb = random.randrange(1, 11)
+                        if weightsProb > 5:
+                            #Take parent 1
+                            weightsOne[j][k] = parentOne['weightsOne'][j][k]
+                        else:
+                            #Take parent 2
+                            weightsOne[j][k] = parentTwo['weightsOne'][j][k]
             
-            # Then pick either parent to be slit for first half, other parent split for second 
+            # Second Layer
+            for j in range(0, self.networkLayout.hiddenLayerTwoSize):
+                mutateProbBias = random.randrange(1, self.mutatePercentage)
+                if mutateProbBias == 1:
+                    newNum = np.random.uniform(-1, 1, 1)[0]
+                    biasesTwo.append(newNum)
+                else:
+                    biasProb = random.randrange(1, 11)
+                    if biasProb > 5:
+                        biasesTwo.append(parentOne['biasesTwo'][j])
+                    else:
+                        biasesTwo.append(parentTwo['biasesTwo'][j])
 
+                for k in range(0, self.networkLayout.hiddenLayerOneSize):
+                    mutateProbWeight = random.randrange(1, self.mutatePercentage)
+                    if mutateProbWeight == 1:
+                        newNum = np.random.uniform(-1, 1, 1)[0]
+                        weightsTwo[j][k] = newNum
+                    else:
+                        weightsProb = random.randrange(1, 11)
+                        if weightsProb > 5:
+                            weightsTwo[j][k] = parentOne['weightsTwo'][j][k]
+                        else:
+                            weightsTwo[j][k] = parentTwo['weightsTwo'][j][k]
 
-            # Split the parents along this set. Randomly pick either parent 1 or 2 to be the first 'half' and second 'half'?
-            # OR Pick the parent One to be the bigger side
+            # Third Layer
+            for j in range(0, self.networkLayout.hiddenLayerThreeSize):
+                mutateProbBias = random.randrange(1, self.mutatePercentage)
+                if mutateProbBias == 1:
+                    newNum = np.random.uniform(-1, 1, 1)[0]
+                    biasesThree.append(newNum)
+                else:
+                    biasProb = random.randrange(1, 11)
+                    if biasProb > 5:
+                        biasesThree.append(parentOne['biasesThree'][j])
+                    else:
+                        biasesThree.append(parentTwo['biasesThree'][j])
 
-            # Merge the two sets
+                for k in range(0, self.networkLayout.hiddenLayerTwoSize):
+                    mutateProbWeight = random.randrange(1, self.mutatePercentage)
+                    if mutateProbWeight == 1:
+                        newNum = np.random.uniform(-1, 1, 1)[0]
+                        weightsThree[j][k] = newNum
+                    else:
+                        weightsProb = random.randrange(1, 11)
+                        if weightsProb > 5:
+                            weightsThree[j][k] = parentOne['weightsThree'][j][k]
+                        else:
+                            weightsThree[j][k] = parentTwo['weightsThree'][j][k]
+            
+            # Fourth Layer
+            for j in range(0, self.networkLayout.hiddenLayerFourSize):
+                mutateProbBias = random.randrange(1, self.mutatePercentage)
+                if mutateProbBias == 1:
+                    newNum = np.random.uniform(-1, 1, 1)[0]
+                    biasesFour.append(newNum)
+                else:
+                    biasProb = random.randrange(1, 11)
+                    if biasProb > 5:
+                        biasesFour.append(parentOne['biasesFour'][j])
+                    else:
+                        biasesFour.append(parentTwo['biasesFour'][j])
 
-            # Randomly generate a number, to determine weather we mutate a value
+                for k in range(0, self.networkLayout.hiddenLayerThreeSize):
+                    mutateProbWeight = random.randrange(1, self.mutatePercentage)
+                    if mutateProbWeight == 1:
+                        newNum = np.random.uniform(-1, 1, 1)[0]
+                        weightsFour[j][k] = newNum
+                    else:
+                        weightsProb = random.randrange(1, 11)
+                        if weightsProb > 5:
+                            weightsFour[j][k] = parentOne['weightsFour'][j][k]
+                        else:
+                            weightsFour[j][k] = parentTwo['weightsFour'][j][k]
+            
+            # Fifth Layer
+            for j in range(0, self.networkLayout.outputLayerSize):
+                mutateProbBias = random.randrange(1, self.mutatePercentage)
+                if mutateProbBias == 1:
+                    newNum = np.random.uniform(-1, 1, 1)[0]
+                    biasesFive.append(newNum)
+                else:
+                    biasProb = random.randrange(1, 11)
+                    if biasProb > 5:
+                        biasesFive.append(parentOne['biasesFive'][j])
+                    else:
+                        biasesFive.append(parentTwo['biasesFive'][j])
+
+                for k in range(0, self.networkLayout.hiddenLayerFourSize):
+                    mutateProbWeight = random.randrange(1, self.mutatePercentage)
+                    if mutateProbWeight == 1:
+                        newNum = np.random.uniform(-1, 1, 1)[0]
+                        weightsFive[j][k] = newNum
+                    else:
+                        weightsProb = random.randrange(1, 11)
+                        if weightsProb > 5:
+                            weightsFive[j][k] = parentOne['weightsFive'][j][k]
+                        else:
+                            weightsFive[j][k] = parentTwo['weightsFive'][j][k]
+            
+            carData = {
+                "weightsOne": weightsOne,
+                "biasesOne": biasesOne,
+                "weightsTwo": weightsTwo,
+                "biasesTwo": biasesTwo,
+                "weightsThree": weightsThree,
+                "biasesThree": biasesThree,
+                "weightsFour": weightsFour,
+                "biasesFour": biasesFour,
+                "weightsFive": weightsFive,
+                "biasesFive": biasesFive,
+                "fitnessValue": 0
+            }
+
+            # Format json
+            formattedCarObject = json.dumps(carData, indent = 4)
+            with open('./Cars/car' + str(i) + '.json', 'w') as carFile:
+                carFile.write(formattedCarObject)
+        
+        # Update generation number
+        with open('./Cars/generations_counter.json') as genCountFile:
+                countObj = json.load(genCountFile)
+        newGen = countObj['generation'] + 1
+        newGenCount = {
+            "generation": newGen
+        }
+        formattedNewGenCount = json.dumps(newGenCount, indent = 4)
+        with open('./Cars/generations_counter.json', 'w') as newGenFile:
+                newGenFile.write(formattedNewGenCount)
