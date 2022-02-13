@@ -93,6 +93,12 @@ class NetworkLayout():
             formattedInitGen = json.dumps(initGen, indent = 4)
             with open('./Cars/generations_counter.json', 'w') as genFile:
                 genFile.write(formattedInitGen)
+            initBest = {
+                "fitnessValue": -1
+            }
+            formattedInitBest = json.dumps(initBest, indent = 4)
+            with open('./Cars/BestCar.json', 'w') as bestFile:
+                bestFile.write(formattedInitBest)
     
     '''
         loadNetwork loads a current network. All other Car/Generation handling (incrementing and if complete, starting crossover etc...) and checking for if the Car has alrady been evaluated
