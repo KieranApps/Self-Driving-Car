@@ -7,9 +7,9 @@ class NetworkLayout():
         # These layer sizes can be tweaked to create a better functioning Neural Network
         self.inputSize = 10
         self.hiddenLayerOneSize = 10
-        self.hiddenLayerTwoSize = 7
-        self.hiddenLayerThreeSize = 5
-        self.hiddenLayerFourSize = 3
+        # self.hiddenLayerTwoSize = 2
+        # self.hiddenLayerThreeSize = 5
+        # self.hiddenLayerFourSize = 3
         self.outputLayerSize = 2
         
         # These will be the arrays of all weights and biases (more can be added or taken away to perfect layout)
@@ -17,18 +17,17 @@ class NetworkLayout():
         self.biasesOne = []
         self.weightsTwo = []
         self.biasesTwo = []
-        self.weightsThree = []
-        self.biasesThree = []
-        self.weightsFour = []
-        self.biasesFour = []
-        self.weightsFive = []
-        self.biasesFive = []
+        # self.weightsThree = []
+        # self.biasesThree = []
+        # self.weightsFour = []
+        # self.biasesFour = []
+        # self.weightsFive = []
+        # self.biasesFive = []
 
         # This will be used to keep track of which NN we are currently using
         self.currentCar = 1
         self.generationSize = 50
         self.currentNotBetterThanBest = 0
-        self.stopTraining = False
 
         # Store current parent cars data for comparisons
         self.parentOne = {}
@@ -45,41 +44,41 @@ class NetworkLayout():
         for i in range(1, self.generationSize + 1):
             weightsOne = []
             for j in range(0, self.hiddenLayerOneSize):
-                weightsOne.append(np.random.uniform(-1, 1, self.inputSize).tolist())
-            biasesOne = np.random.uniform(-1, 1, self.hiddenLayerOneSize)
+                weightsOne.append(np.random.uniform(-5, 5, self.inputSize).tolist())
+            biasesOne = np.random.uniform(-5, 5, self.hiddenLayerOneSize)
 
             weightsTwo = []
-            for j in range(0, self.hiddenLayerTwoSize):
-                weightsTwo.append(np.random.uniform(-1, 1, self.hiddenLayerOneSize).tolist())
-            biasesTwo = np.random.uniform(-1, 1, self.hiddenLayerTwoSize)
-
-            weightsThree = []
-            for j in range(0, self.hiddenLayerThreeSize):
-                weightsThree.append(np.random.uniform(-1, 1, self.hiddenLayerTwoSize).tolist())
-            biasesThree = np.random.uniform(-1, 1, self.hiddenLayerThreeSize)
-
-            weightsFour = []
-            for j in range(0, self.hiddenLayerFourSize):
-                weightsFour.append(np.random.uniform(-1, 1, self.hiddenLayerThreeSize).tolist())
-            biasesFour = np.random.uniform(-1, 1, self.hiddenLayerFourSize)
-
-            # Output will be of two so that there is the acceleration value turn angle
-            weightsFive = []
             for j in range(0, self.outputLayerSize):
-                weightsFive.append(np.random.uniform(-1, 1, self.hiddenLayerFourSize).tolist())
-            biasesFive = np.random.uniform(-1, 1, 2)
+                weightsTwo.append(np.random.uniform(-5, 5, self.hiddenLayerOneSize).tolist())
+            biasesTwo = np.random.uniform(-5, 5, self.outputLayerSize)
+
+            # weightsThree = []
+            # for j in range(0, self.outputLayerSize):
+            #     weightsThree.append(np.random.uniform(-1, 1, self.hiddenLayerTwoSize).tolist())
+            # biasesThree = np.random.uniform(-1, 1, self.outputLayerSize)
+
+            # weightsFour = []
+            # for j in range(0, self.hiddenLayerFourSize):
+            #     weightsFour.append(np.random.uniform(-1, 1, self.hiddenLayerThreeSize).tolist())
+            # biasesFour = np.random.uniform(-1, 1, self.hiddenLayerFourSize)
+
+            # # Output will be of two so that there is the acceleration value turn angle
+            # weightsFive = []
+            # for j in range(0, self.outputLayerSize):
+            #     weightsFive.append(np.random.uniform(-1, 1, self.hiddenLayerFourSize).tolist())
+            # biasesFive = np.random.uniform(-1, 1, 2)
 
             carData = {
                 "weightsOne": weightsOne,
                 "biasesOne": biasesOne.tolist(),
                 "weightsTwo": weightsTwo,
                 "biasesTwo": biasesTwo.tolist(),
-                "weightsThree": weightsThree,
-                "biasesThree": biasesThree.tolist(),
-                "weightsFour": weightsFour,
-                "biasesFour": biasesFour.tolist(),
-                "weightsFive": weightsFive,
-                "biasesFive": biasesFive.tolist(),
+                # "weightsThree": weightsThree,
+                # "biasesThree": biasesThree.tolist(),
+                # "weightsFour": weightsFour,
+                # "biasesFour": biasesFour.tolist(),
+                # "weightsFive": weightsFive,
+                # "biasesFive": biasesFive.tolist(),
                 "fitnessValue": 0
             }
 
@@ -113,16 +112,12 @@ class NetworkLayout():
         self.biasesOne = np.array(carObject['biasesOne'])
         self.weightsTwo = np.array(carObject['weightsTwo'])
         self.biasesTwo = np.array(carObject['biasesTwo'])
-        self.weightsThree = np.array(carObject['weightsThree'])
-        self.biasesThree = np.array(carObject['biasesThree'])
-        self.weightsFour = np.array(carObject['weightsFour'])
-        self.biasesFour = np.array(carObject['biasesFour'])
-        self.weightsFive = np.array(carObject['weightsFive'])
-        self.biasesFive = np.array(carObject['biasesFive'])
-
-    def findFirstNotRunCar(self):
-        print('Finding Car to Start With...')
-        # Scan through to find the first car without a fitness
+        # self.weightsThree = np.array(carObject['weightsThree'])
+        # self.biasesThree = np.array(carObject['biasesThree'])
+        # self.weightsFour = np.array(carObject['weightsFour'])
+        # self.biasesFour = np.array(carObject['biasesFour'])
+        # self.weightsFive = np.array(carObject['weightsFive'])
+        # self.biasesFive = np.array(carObject['biasesFive'])
 
     def findParents(self):
         print('Finding Parents...')
@@ -132,12 +127,12 @@ class NetworkLayout():
             "biasesOne": [],
             "weightsTwo": [],
             "biasesTwo": [],
-            "weightsThree": [],
-            "biasesThree": [],
-            "weightsFour": [],
-            "biasesFour": [],
-            "weightsFive": [],
-            "biasesFive": [],
+            # "weightsThree": [],
+            # "biasesThree": [],
+            # "weightsFour": [],
+            # "biasesFour": [],
+            # "weightsFive": [],
+            # "biasesFive": [],
             "fitnessValue": -1
         }
         self.parentTwo = {
@@ -145,12 +140,12 @@ class NetworkLayout():
             "biasesOne": [],
             "weightsTwo": [],
             "biasesTwo": [],
-            "weightsThree": [],
-            "biasesThree": [],
-            "weightsFour": [],
-            "biasesFour": [],
-            "weightsFive": [],
-            "biasesFive": [],
+            # "weightsThree": [],
+            # "biasesThree": [],
+            # "weightsFour": [],
+            # "biasesFour": [],
+            # "weightsFive": [],
+            # "biasesFive": [],
             "fitnessValue": -1
         }
         
@@ -191,6 +186,7 @@ class NetworkLayout():
         # If file doesnt exist, auto save parent 1
         # Best car is init to -1 so its guarunteed to save the best on first run
         if float(bestCar['fitnessValue']) < self.parentOne['fitnessValue']:
+            self.currentNotBetterThanBest = 0
             formattedNewBest = json.dumps(self.parentOne, indent = 4)
             with open('./Cars/BestCar.json', 'w') as newBestCarFile:
                 newBestCarFile.write(formattedNewBest)
@@ -204,12 +200,12 @@ class NetworkLayout():
             "biasesOne": self.biasesOne.tolist(),
             "weightsTwo": self.weightsTwo.tolist(),
             "biasesTwo": self.biasesTwo.tolist(),
-            "weightsThree": self.weightsThree.tolist(),
-            "biasesThree": self.biasesThree.tolist(),
-            "weightsFour": self.weightsFour.tolist(),
-            "biasesFour": self.biasesFour.tolist(),
-            "weightsFive": self.weightsFive.tolist(),
-            "biasesFive": self.biasesFive.tolist(),
+            # "weightsThree": self.weightsThree.tolist(),
+            # "biasesThree": self.biasesThree.tolist(),
+            # "weightsFour": self.weightsFour.tolist(),
+            # "biasesFour": self.biasesFour.tolist(),
+            # "weightsFive": self.weightsFive.tolist(),
+            # "biasesFive": self.biasesFive.tolist(),
             "fitnessValue": fitness
         }
         # Format json

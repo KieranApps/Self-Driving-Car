@@ -24,9 +24,6 @@ def processInputs(data):
 
     elif ('reset' in jsonData and jsonData['reset']  == True):
         status = neuralNetwork.reset(jsonData['time'], jsonData['distance'], DELIMITER)
-        if(status == True):
-            sock.close()
-            sys.exit()
         sock.sendall(status.encode())
 
 

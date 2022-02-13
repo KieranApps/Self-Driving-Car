@@ -5,6 +5,7 @@ import math
 
 import NetworkLayout as NL
 
+MUTATE_PERCENTAGE = 21
 POTENTIAL_MAX_SPEED = 65
 POTENTIAL_MAX_FRONT = 400 # Longest straights
 POTENTIAL_MAX_LEFT_RIGHT = 10 # Track width
@@ -15,9 +16,7 @@ POTENTIAL_MAX_68 = 250 # Max distance will be hit going around a corner, and ont
 class NeuralNetwork():
     def __init__(self):
         self.networkLayout = NL.NetworkLayout()
-        # self.networkLayout.findFirstNotRunCar()
         self.networkLayout.loadNetwork()
-        self.mutatePercentage = 101
 
     def reset(self, time, distance, DELIMITER):
         # Find fitness of current Car in the generation, and save this to file
@@ -26,8 +25,6 @@ class NeuralNetwork():
         if(self.networkLayout.isEndOfGeneration()):
             print('Generation Finished. Find Parents.')
             self.networkLayout.findParents()
-            if self.networkLayout.stopTraining == True:
-                return True
 
             self.performCrossover()
             self.networkLayout.currentCar = 1
@@ -77,34 +74,34 @@ class NeuralNetwork():
             sigmoidResult = 1/(1 + math.e**(-result))
             resultsOne.append(sigmoidResult)
 
-        resultsTwo = []
-        for i in range(self.networkLayout.hiddenLayerTwoSize):
+        resultsForInput = []
+        for i in range(self.networkLayout.outputLayerSize):
             combinedArray =  np.array([self.networkLayout.weightsTwo[i], resultsOne])
             result = np.sum(combinedArray.prod(axis=0, dtype=np.float32)) * self.networkLayout.biasesTwo[i]
-            sigmoidResult = 1/(1 + math.e**(-result))
-            resultsTwo.append(sigmoidResult)
+            sigmoidResult = 2*((1/(1 + math.e**(-result))) - 0.5)
+            resultsForInput.append(sigmoidResult)
         
-        resultsThree = []
-        for i in range(self.networkLayout.hiddenLayerThreeSize):
-            combinedArray =  np.array([self.networkLayout.weightsThree[i], resultsTwo])
-            result = np.sum(combinedArray.prod(axis=0, dtype=np.float32)) * self.networkLayout.biasesThree[i]
-            sigmoidResult = 1/(1 + math.e**(-result))
-            resultsThree.append(sigmoidResult)
+        # resultsForInput = []
+        # for i in range(self.networkLayout.outputLayerSize):
+        #     combinedArray =  np.array([self.networkLayout.weightsThree[i], resultsTwo])
+        #     result = np.sum(combinedArray.prod(axis=0, dtype=np.float32)) * self.networkLayout.biasesThree[i]
+        #     sigmoidResult = 1/(1 + math.e**(-result))
+        #     resultsForInput.append(sigmoidResult)
         
-        resultsFour = []
-        for i in range(self.networkLayout.hiddenLayerFourSize):
-            combinedArray =  np.array([self.networkLayout.weightsFour[i], resultsThree])
-            result = np.sum(combinedArray.prod(axis=0, dtype=np.float32)) * self.networkLayout.biasesFour[i]
-            sigmoidResult = 1/(1 + math.e**(-result))
-            resultsFour.append(sigmoidResult)
+        # resultsFour = []
+        # for i in range(self.networkLayout.hiddenLayerFourSize):
+        #     combinedArray =  np.array([self.networkLayout.weightsFour[i], resultsThree])
+        #     result = np.sum(combinedArray.prod(axis=0, dtype=np.float32)) * self.networkLayout.biasesFour[i]
+        #     sigmoidResult = 1/(1 + math.e**(-result))
+        #     resultsFour.append(sigmoidResult)
         
-        # Calculate the output
-        resultsForInput = []
-        for i in range(0, self.networkLayout.outputLayerSize):
-            combinedArray =  np.array([self.networkLayout.weightsFive[i], resultsFour])
-            result = np.sum(combinedArray.prod(axis=0, dtype=np.float32)) * self.networkLayout.biasesFive[i]
-            resultProcessedForCarInput = 2*((1/(1 + math.e**(-result))) - 0.5)
-            resultsForInput.append(resultProcessedForCarInput)
+        # # Calculate the output
+        # resultsForInput = []
+        # for i in range(0, self.networkLayout.outputLayerSize):
+        #     combinedArray =  np.array([self.networkLayout.weightsFive[i], resultsFour])
+        #     result = np.sum(combinedArray.prod(axis=0, dtype=np.float32)) * self.networkLayout.biasesFive[i]
+        #     resultProcessedForCarInput = 2*((1/(1 + math.e**(-result))) - 0.5)
+        #     resultsForInput.append(resultProcessedForCarInput)
         
         return resultsForInput
 
@@ -112,7 +109,7 @@ class NeuralNetwork():
         # The higher the speed, the better the 'fitness'
         # Make the distance slightly more valuable than the speed (a car that makes it further, but slightly slower, is better than a fast car that doesnt get that far)
         # These values will be large since the distance measures up to and above 30000
-        carFitness = (distance*1.5)/(time*1.25)
+        carFitness = (distance*2)/(time)
         self.networkLayout.saveFitnessValue(carFitness)
 
     def performCrossover(self):
@@ -130,21 +127,34 @@ class NeuralNetwork():
         # 50/50 Probability if the current individual weight or bias is taken from parent one or two
         for i in range(1, self.networkLayout.generationSize + 1):            
             weightsOne = [[-1 for n in range(self.networkLayout.inputSize)] for m in range(self.networkLayout.hiddenLayerOneSize)]
-            weightsTwo = [[-1 for n in range(self.networkLayout.hiddenLayerOneSize)] for m in range(self.networkLayout.hiddenLayerTwoSize)]
-            weightsThree = [[-1 for n in range(self.networkLayout.hiddenLayerTwoSize)] for m in range(self.networkLayout.hiddenLayerThreeSize)]
-            weightsFour = [[-1 for n in range(self.networkLayout.hiddenLayerThreeSize)] for m in range(self.networkLayout.hiddenLayerFourSize)]
-            weightsFive = [[-1 for n in range(self.networkLayout.hiddenLayerFourSize)] for m in range(self.networkLayout.outputLayerSize)]
+            weightsTwo = [[-1 for n in range(self.networkLayout.hiddenLayerOneSize)] for m in range(self.networkLayout.outputLayerSize)]
+            # weightsThree = [[-1 for n in range(self.networkLayout.hiddenLayerTwoSize)] for m in range(self.networkLayout.outputLayerSize)]
+            # weightsFour = [[-1 for n in range(self.networkLayout.hiddenLayerThreeSize)] for m in range(self.networkLayout.hiddenLayerFourSize)]
+            # weightsFive = [[-1 for n in range(self.networkLayout.hiddenLayerFourSize)] for m in range(self.networkLayout.outputLayerSize)]
 
             biasesOne = []
             biasesTwo = []
-            biasesThree = []
-            biasesFour = []
-            biasesFive = []
-
+            # biasesThree = []
+            # biasesFour = []
+            # biasesFive = []
+            '''
+                Still need to add: RUN BEST ONLY
+            '''
+            '''
+                If it keeps getting stuck in local optima, implement a changing mutation rate. The slower it is increasing (i.e best car fitness increases by < 1 for a couple)
+                the higher the mutation, the faster its improving, the slower the mutation rate
+            '''
+            '''
+                OR, can try making a much more simple NN, maybe two layers, 1 and 10, the second at4 or 5. Then the output
+            '''
+            '''
+                OR, add the best into the gene pool. So crossover between two parents and the best? If best is diff
+            '''
             # First Layer
             for j in range(0, self.networkLayout.hiddenLayerOneSize):
-                mutateProbBias = random.randrange(1, self.mutatePercentage) # We want a 1% chance of mutation, so 1 to 100, and if it is 1, we mutate the individual value
+                mutateProbBias = random.randrange(1, MUTATE_PERCENTAGE) # We want a 5% chance of mutation, so 1 to 100, and if it is 1, we mutate the individual value
                 if mutateProbBias == 1:
+                    # We use an extension of the bit flip mutation to be a 'Random Reset' of a randomly chosen gene
                     newNum = np.random.uniform(-1, 1, 1)[0]
                     biasesOne.append(newNum)
                 else:
@@ -158,7 +168,7 @@ class NeuralNetwork():
 
                 # Create the weights array
                 for k in range(0, self.networkLayout.inputSize):
-                    mutateProbWeight = random.randrange(1, self.mutatePercentage)
+                    mutateProbWeight = random.randrange(1, MUTATE_PERCENTAGE)
                     if mutateProbWeight == 1:
                         newNum = np.random.uniform(-1, 1, 1)[0]
                         weightsOne[j][k] = newNum
@@ -172,8 +182,8 @@ class NeuralNetwork():
                             weightsOne[j][k] = parentTwo['weightsOne'][j][k]
             
             # Second Layer
-            for j in range(0, self.networkLayout.hiddenLayerTwoSize):
-                mutateProbBias = random.randrange(1, self.mutatePercentage)
+            for j in range(0, self.networkLayout.outputLayerSize):
+                mutateProbBias = random.randrange(1, MUTATE_PERCENTAGE)
                 if mutateProbBias == 1:
                     newNum = np.random.uniform(-1, 1, 1)[0]
                     biasesTwo.append(newNum)
@@ -185,7 +195,7 @@ class NeuralNetwork():
                         biasesTwo.append(parentTwo['biasesTwo'][j])
 
                 for k in range(0, self.networkLayout.hiddenLayerOneSize):
-                    mutateProbWeight = random.randrange(1, self.mutatePercentage)
+                    mutateProbWeight = random.randrange(1, MUTATE_PERCENTAGE)
                     if mutateProbWeight == 1:
                         newNum = np.random.uniform(-1, 1, 1)[0]
                         weightsTwo[j][k] = newNum
@@ -196,92 +206,92 @@ class NeuralNetwork():
                         else:
                             weightsTwo[j][k] = parentTwo['weightsTwo'][j][k]
 
-            # Third Layer
-            for j in range(0, self.networkLayout.hiddenLayerThreeSize):
-                mutateProbBias = random.randrange(1, self.mutatePercentage)
-                if mutateProbBias == 1:
-                    newNum = np.random.uniform(-1, 1, 1)[0]
-                    biasesThree.append(newNum)
-                else:
-                    biasProb = random.randrange(1, 11)
-                    if biasProb > 5:
-                        biasesThree.append(parentOne['biasesThree'][j])
-                    else:
-                        biasesThree.append(parentTwo['biasesThree'][j])
+            # # Third Layer
+            # for j in range(0, self.networkLayout.outputLayerSize):
+            #     mutateProbBias = random.randrange(1, MUTATE_PERCENTAGE)
+            #     if mutateProbBias == 1:
+            #         newNum = np.random.uniform(-1, 1, 1)[0]
+            #         biasesThree.append(newNum)
+            #     else:
+            #         biasProb = random.randrange(1, 11)
+            #         if biasProb > 5:
+            #             biasesThree.append(parentOne['biasesThree'][j])
+            #         else:
+            #             biasesThree.append(parentTwo['biasesThree'][j])
 
-                for k in range(0, self.networkLayout.hiddenLayerTwoSize):
-                    mutateProbWeight = random.randrange(1, self.mutatePercentage)
-                    if mutateProbWeight == 1:
-                        newNum = np.random.uniform(-1, 1, 1)[0]
-                        weightsThree[j][k] = newNum
-                    else:
-                        weightsProb = random.randrange(1, 11)
-                        if weightsProb > 5:
-                            weightsThree[j][k] = parentOne['weightsThree'][j][k]
-                        else:
-                            weightsThree[j][k] = parentTwo['weightsThree'][j][k]
+            #     for k in range(0, self.networkLayout.hiddenLayerTwoSize):
+            #         mutateProbWeight = random.randrange(1, MUTATE_PERCENTAGE)
+            #         if mutateProbWeight == 1:
+            #             newNum = np.random.uniform(-1, 1, 1)[0]
+            #             weightsThree[j][k] = newNum
+            #         else:
+            #             weightsProb = random.randrange(1, 11)
+            #             if weightsProb > 5:
+            #                 weightsThree[j][k] = parentOne['weightsThree'][j][k]
+            #             else:
+            #                 weightsThree[j][k] = parentTwo['weightsThree'][j][k]
             
             # Fourth Layer
-            for j in range(0, self.networkLayout.hiddenLayerFourSize):
-                mutateProbBias = random.randrange(1, self.mutatePercentage)
-                if mutateProbBias == 1:
-                    newNum = np.random.uniform(-1, 1, 1)[0]
-                    biasesFour.append(newNum)
-                else:
-                    biasProb = random.randrange(1, 11)
-                    if biasProb > 5:
-                        biasesFour.append(parentOne['biasesFour'][j])
-                    else:
-                        biasesFour.append(parentTwo['biasesFour'][j])
+            # for j in range(0, self.networkLayout.hiddenLayerFourSize):
+            #     mutateProbBias = random.randrange(1, MUTATE_PERCENTAGE)
+            #     if mutateProbBias == 1:
+            #         newNum = np.random.uniform(-1, 1, 1)[0]
+            #         biasesFour.append(newNum)
+            #     else:
+            #         biasProb = random.randrange(1, 11)
+            #         if biasProb > 5:
+            #             biasesFour.append(parentOne['biasesFour'][j])
+            #         else:
+            #             biasesFour.append(parentTwo['biasesFour'][j])
 
-                for k in range(0, self.networkLayout.hiddenLayerThreeSize):
-                    mutateProbWeight = random.randrange(1, self.mutatePercentage)
-                    if mutateProbWeight == 1:
-                        newNum = np.random.uniform(-1, 1, 1)[0]
-                        weightsFour[j][k] = newNum
-                    else:
-                        weightsProb = random.randrange(1, 11)
-                        if weightsProb > 5:
-                            weightsFour[j][k] = parentOne['weightsFour'][j][k]
-                        else:
-                            weightsFour[j][k] = parentTwo['weightsFour'][j][k]
+            #     for k in range(0, self.networkLayout.hiddenLayerThreeSize):
+            #         mutateProbWeight = random.randrange(1, MUTATE_PERCENTAGE)
+            #         if mutateProbWeight == 1:
+            #             newNum = np.random.uniform(-1, 1, 1)[0]
+            #             weightsFour[j][k] = newNum
+            #         else:
+            #             weightsProb = random.randrange(1, 11)
+            #             if weightsProb > 5:
+            #                 weightsFour[j][k] = parentOne['weightsFour'][j][k]
+            #             else:
+            #                 weightsFour[j][k] = parentTwo['weightsFour'][j][k]
             
-            # Fifth Layer
-            for j in range(0, self.networkLayout.outputLayerSize):
-                mutateProbBias = random.randrange(1, self.mutatePercentage)
-                if mutateProbBias == 1:
-                    newNum = np.random.uniform(-1, 1, 1)[0]
-                    biasesFive.append(newNum)
-                else:
-                    biasProb = random.randrange(1, 11)
-                    if biasProb > 5:
-                        biasesFive.append(parentOne['biasesFive'][j])
-                    else:
-                        biasesFive.append(parentTwo['biasesFive'][j])
+            # # Fifth Layer
+            # for j in range(0, self.networkLayout.outputLayerSize):
+            #     mutateProbBias = random.randrange(1, MUTATE_PERCENTAGE)
+            #     if mutateProbBias == 1:
+            #         newNum = np.random.uniform(-1, 1, 1)[0]
+            #         biasesFive.append(newNum)
+            #     else:
+            #         biasProb = random.randrange(1, 11)
+            #         if biasProb > 5:
+            #             biasesFive.append(parentOne['biasesFive'][j])
+            #         else:
+            #             biasesFive.append(parentTwo['biasesFive'][j])
 
-                for k in range(0, self.networkLayout.hiddenLayerFourSize):
-                    mutateProbWeight = random.randrange(1, self.mutatePercentage)
-                    if mutateProbWeight == 1:
-                        newNum = np.random.uniform(-1, 1, 1)[0]
-                        weightsFive[j][k] = newNum
-                    else:
-                        weightsProb = random.randrange(1, 11)
-                        if weightsProb > 5:
-                            weightsFive[j][k] = parentOne['weightsFive'][j][k]
-                        else:
-                            weightsFive[j][k] = parentTwo['weightsFive'][j][k]
+            #     for k in range(0, self.networkLayout.hiddenLayerFourSize):
+            #         mutateProbWeight = random.randrange(1, MUTATE_PERCENTAGE)
+            #         if mutateProbWeight == 1:
+            #             newNum = np.random.uniform(-1, 1, 1)[0]
+            #             weightsFive[j][k] = newNum
+            #         else:
+            #             weightsProb = random.randrange(1, 11)
+            #             if weightsProb > 5:
+            #                 weightsFive[j][k] = parentOne['weightsFive'][j][k]
+            #             else:
+            #                 weightsFive[j][k] = parentTwo['weightsFive'][j][k]
             
             carData = {
                 "weightsOne": weightsOne,
                 "biasesOne": biasesOne,
                 "weightsTwo": weightsTwo,
                 "biasesTwo": biasesTwo,
-                "weightsThree": weightsThree,
-                "biasesThree": biasesThree,
-                "weightsFour": weightsFour,
-                "biasesFour": biasesFour,
-                "weightsFive": weightsFive,
-                "biasesFive": biasesFive,
+                # "weightsThree": weightsThree,
+                # "biasesThree": biasesThree,
+                # "weightsFour": weightsFour,
+                # "biasesFour": biasesFour,
+                # "weightsFive": weightsFive,
+                # "biasesFive": biasesFive,
                 "fitnessValue": 0
             }
 
