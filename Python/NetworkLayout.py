@@ -4,6 +4,9 @@ import json
 class NetworkLayout():
 
     def __init__(self):
+
+        self.bestCarOnly = True
+
         # These layer sizes can be tweaked to create a better functioning Neural Network
         self.inputSize = 10
         self.hiddenLayerOneSize = 3
@@ -93,8 +96,15 @@ class NetworkLayout():
         will be completed in seperate functions
     '''
     def loadNetwork(self):
-        print('Loading New Network...', self.currentCar)
-        with open('./Cars/car' + str(self.currentCar) + '.json') as carFile:
+        fileName = ''
+        if self.bestCarOnly == True:
+            print('Loading BEST Network...')
+            fileName = 'BestCar.json'
+        else:
+            print('Loading New Network...', self.currentCar)
+            fileName = './Cars/car' + str(self.currentCar) + '.json'
+        
+        with open(fileName) as carFile:
             carObject = json.load(carFile)
 
         self.weightsOne = np.array(carObject['weightsOne'])
