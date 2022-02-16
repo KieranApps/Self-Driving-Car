@@ -76,7 +76,6 @@ public class CarController : MonoBehaviour
     }
 
     private void Turn() {
-        Debug.Log(turnInput);
         steeringAngle = MAX_STEER_ANGLE * turnInput;
         frontLeft.steerAngle = steeringAngle;
         frontRight.steerAngle = steeringAngle;
