@@ -21,6 +21,13 @@ class NeuralNetwork():
     def reset(self, time, distance, DELIMITER):
         # Find fitness of current Car in the generation, and save this to file
 
+        if self.networkLayout.bestCarOnly == True:
+            ## Dont bother with anything, just keep the best network only
+            status = {
+                "finishedReset": True
+            }
+            return json.dumps(status) + DELIMITER
+
         # Increase the car/Load a new network, OR, run crossover for a new generation (this includes picking parents and comparing the current best NN)
         if(self.networkLayout.isEndOfGeneration()):
             print('Generation Finished. Find Parents.')
@@ -98,16 +105,15 @@ class NeuralNetwork():
         return resultsForInput
 
     def findFitness(self, time, distance):
-        # The higher the speed, the better the 'fitness'
-        # Make the distance slightly more valuable than the speed (a car that makes it further, but slightly slower, is better than a fast car that doesnt get that far)
-        # These values will be large since the distance measures up to and above 30000
-        carFitness = (distance - (time * 10))/100
+        # carFitness = (distance - (time * 10))/100 # This fitness was used for the fitness of distance
+        if distance/10 < 2750:
+            carFitness = (distance/10)/time - 15
+        else:
+            carFitness = (distance/10)/time
         self.networkLayout.saveFitnessValue(carFitness)
 
     def performCrossover(self):
         print('Performing Crossover...')
-        # This function will be the one to run the genetic algorithm of mixing other NNs when implemented
-        # Only need two parents, from the network layout (can use local variable, or load in from file)
         parentOne = {}
         parentTwo = {}
         with open('./Cars/parentOne.json') as parentOneFile:
@@ -127,13 +133,10 @@ class NeuralNetwork():
             biasesTwo = []
             biasesThree = []
             biasesFour = []
-            '''
-                Still need to add: RUN BEST ONLY
-            '''
 
             # First Layer
             for j in range(0, self.networkLayout.hiddenLayerOneSize):
-                mutateProbBias = random.randrange(1, MUTATE_PERCENTAGE) # We want a 1% chance of mutation, so 1 to 100, and if it is 1, we mutate the individual value
+                mutateProbBias = random.randrange(1, MUTATE_PERCENTAGE)
                 if mutateProbBias == 1:
                     # We use an extension of the bit flip mutation to be a 'Random Reset' of a randomly chosen gene
                     newNum = np.random.uniform(-2.5, 2.5, 1)[0]

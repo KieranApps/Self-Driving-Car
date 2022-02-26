@@ -5,7 +5,7 @@ class NetworkLayout():
 
     def __init__(self):
 
-        self.bestCarOnly = True
+        self.bestCarOnly = False
 
         # These layer sizes can be tweaked to create a better functioning Neural Network
         self.inputSize = 10
@@ -99,7 +99,7 @@ class NetworkLayout():
         fileName = ''
         if self.bestCarOnly == True:
             print('Loading BEST Network...')
-            fileName = 'BestCar.json'
+            fileName = './Cars/BestCar.json'
         else:
             print('Loading New Network...', self.currentCar)
             fileName = './Cars/car' + str(self.currentCar) + '.json'
