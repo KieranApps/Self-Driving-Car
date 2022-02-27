@@ -5,7 +5,7 @@ class NetworkLayout():
 
     def __init__(self):
 
-        self.bestCarOnly = False
+        self.bestCarOnly = True
 
         # These layer sizes can be tweaked to create a better functioning Neural Network
         self.inputSize = 10
