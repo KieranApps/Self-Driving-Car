@@ -77,39 +77,37 @@ class NeuralNetwork():
         # Calculate the first layer
         for i in range(0, self.networkLayout.hiddenLayerOneSize):
             combinedArray =  np.array([self.networkLayout.weightsOne[i], inputArray])
-            result = np.sum(combinedArray.prod(axis=0, dtype=np.float32)) * self.networkLayout.biasesOne[i]
+            result = np.sum(combinedArray.prod(axis=0, dtype=np.float32)) + self.networkLayout.biasesOne[i]
             sigmoidResult = 2*((1/(1 + math.e**(-result))) - 0.5)
             resultsOne.append(sigmoidResult)
 
         resultsTwo = []
         for i in range(self.networkLayout.hiddenLayerTwoSize):
             combinedArray =  np.array([self.networkLayout.weightsTwo[i], resultsOne])
-            result = np.sum(combinedArray.prod(axis=0, dtype=np.float32)) * self.networkLayout.biasesTwo[i]
+            result = np.sum(combinedArray.prod(axis=0, dtype=np.float32)) + self.networkLayout.biasesTwo[i]
             sigmoidResult = 2*((1/(1 + math.e**(-result))) - 0.5)
             resultsTwo.append(sigmoidResult)
 
         resultsThree = []
         for i in range(self.networkLayout.hiddenLayerThreeSize):
             combinedArray =  np.array([self.networkLayout.weightsThree[i], resultsTwo])
-            result = np.sum(combinedArray.prod(axis=0, dtype=np.float32)) * self.networkLayout.biasesThree[i]
+            result = np.sum(combinedArray.prod(axis=0, dtype=np.float32)) + self.networkLayout.biasesThree[i]
             sigmoidResult = 2*((1/(1 + math.e**(-result))) - 0.5)
             resultsThree.append(sigmoidResult)
         
         resultsForInput = []
         for i in range(self.networkLayout.outputLayerSize):
             combinedArray =  np.array([self.networkLayout.weightsFour[i], resultsThree])
-            result = np.sum(combinedArray.prod(axis=0, dtype=np.float32)) * self.networkLayout.biasesFour[i]
+            result = np.sum(combinedArray.prod(axis=0, dtype=np.float32)) + self.networkLayout.biasesFour[i]
             sigmoidResult = 2*((1/(1 + math.e**(-result))) - 0.5)
             resultsForInput.append(sigmoidResult)
         
         return resultsForInput
 
     def findFitness(self, time, distance):
-        # carFitness = (distance - (time * 10))/100 # This fitness was used for the fitness of distance
-        if distance/10 < 2750:
-            carFitness = (distance/10)/time - 15
-        else:
-            carFitness = (distance/10)/time
+        distanceFitness = (distance/10 - time) # This fitness was used for the fitness of distance
+        speedFitness = (distance/10)/time # This fitness is used for speed fitness
+        carFitness = distanceFitness + speedFitness # Combine them both
         self.networkLayout.saveFitnessValue(carFitness)
 
     def performCrossover(self):

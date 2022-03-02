@@ -5,7 +5,7 @@ class NetworkLayout():
 
     def __init__(self):
 
-        self.bestCarOnly = True
+        self.bestCarOnly = False
 
         # These layer sizes can be tweaked to create a better functioning Neural Network
         self.inputSize = 10
@@ -128,7 +128,7 @@ class NetworkLayout():
             "biasesThree": [],
             "weightsFour": [],
             "biasesFour": [],
-            "fitnessValue": -1
+            "fitnessValue": float('-inf')
         }
         self.parentTwo = {
             "weightsOne": [],
@@ -139,7 +139,7 @@ class NetworkLayout():
             "biasesThree": [],
             "weightsFour": [],
             "biasesFour": [],
-            "fitnessValue": -1
+            "fitnessValue": float('-inf')
         }
         
         # If the current car is better than both parents, move parent 1 to parent 2 and assign new best to parent 1
