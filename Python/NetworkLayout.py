@@ -9,9 +9,9 @@ class NetworkLayout():
 
         # These layer sizes can be tweaked to create a better functioning Neural Network
         self.inputSize = 10
-        self.hiddenLayerOneSize = 3
-        self.hiddenLayerTwoSize = 5
-        self.hiddenLayerThreeSize = 3
+        self.hiddenLayerOneSize = 10
+        self.hiddenLayerTwoSize = 7
+        self.hiddenLayerThreeSize = 4
         self.outputLayerSize = 2
         
         # These will be the arrays of all weights and biases (more can be added or taken away to perfect layout)
@@ -44,23 +44,23 @@ class NetworkLayout():
         for i in range(1, self.generationSize + 1):
             weightsOne = []
             for j in range(0, self.hiddenLayerOneSize):
-                weightsOne.append(np.random.uniform(-2.5, 2.5, self.inputSize).tolist())
-            biasesOne = np.random.uniform(-2.5, 2.5, self.hiddenLayerOneSize)
+                weightsOne.append(np.random.uniform(-2, 2, self.inputSize).tolist())
+            biasesOne = np.random.uniform(-2, 2, self.hiddenLayerOneSize)
 
             weightsTwo = []
             for j in range(0, self.hiddenLayerTwoSize):
-                weightsTwo.append(np.random.uniform(-2.5, 2.5, self.hiddenLayerOneSize).tolist())
-            biasesTwo = np.random.uniform(-2.5, 2.5, self.hiddenLayerTwoSize)
+                weightsTwo.append(np.random.uniform(-2, 2, self.hiddenLayerOneSize).tolist())
+            biasesTwo = np.random.uniform(-2, 2, self.hiddenLayerTwoSize)
 
             weightsThree = []
             for j in range(0, self.hiddenLayerThreeSize):
-                weightsThree.append(np.random.uniform(-2.5, 2.5, self.hiddenLayerTwoSize).tolist())
-            biasesThree = np.random.uniform(-2.5, 2.5, self.hiddenLayerThreeSize)
+                weightsThree.append(np.random.uniform(-2, 2, self.hiddenLayerTwoSize).tolist())
+            biasesThree = np.random.uniform(-2, 2, self.hiddenLayerThreeSize)
 
             weightsFour = []
             for j in range(0, self.outputLayerSize):
-                weightsFour.append(np.random.uniform(-2.5, 2.5, self.hiddenLayerThreeSize).tolist())
-            biasesFour = np.random.uniform(-2.5, 2.5, self.outputLayerSize)
+                weightsFour.append(np.random.uniform(-2, 2, self.hiddenLayerThreeSize).tolist())
+            biasesFour = np.random.uniform(-2, 2, self.outputLayerSize)
 
             carData = {
                 "weightsOne": weightsOne,

@@ -137,7 +137,7 @@ class NeuralNetwork():
                 mutateProbBias = random.randrange(1, MUTATE_PERCENTAGE)
                 if mutateProbBias == 1:
                     # We use an extension of the bit flip mutation to be a 'Random Reset' of a randomly chosen gene
-                    newNum = np.random.uniform(-2.5, 2.5, 1)[0]
+                    newNum = np.random.uniform(-2, 2, 1)[0]
                     biasesOne.append(newNum)
                 else:
                     biasProb = random.randrange(1, 11)
@@ -152,7 +152,7 @@ class NeuralNetwork():
                 for k in range(0, self.networkLayout.inputSize):
                     mutateProbWeight = random.randrange(1, MUTATE_PERCENTAGE)
                     if mutateProbWeight == 1:
-                        newNum = np.random.uniform(-2.5, 2.5, 1)[0]
+                        newNum = np.random.uniform(-2, 2, 1)[0]
                         weightsOne[j][k] = newNum
                     else:
                         weightsProb = random.randrange(1, 11)
@@ -167,7 +167,7 @@ class NeuralNetwork():
             for j in range(0, self.networkLayout.hiddenLayerTwoSize):
                 mutateProbBias = random.randrange(1, MUTATE_PERCENTAGE)
                 if mutateProbBias == 1:
-                    newNum = np.random.uniform(-2.5, 2.5, 1)[0]
+                    newNum = np.random.uniform(-2, 2, 1)[0]
                     biasesTwo.append(newNum)
                 else:
                     biasProb = random.randrange(1, 11)
@@ -179,7 +179,7 @@ class NeuralNetwork():
                 for k in range(0, self.networkLayout.hiddenLayerOneSize):
                     mutateProbWeight = random.randrange(1, MUTATE_PERCENTAGE)
                     if mutateProbWeight == 1:
-                        newNum = np.random.uniform(-2.5, 2.5, 1)[0]
+                        newNum = np.random.uniform(-2, 2, 1)[0]
                         weightsTwo[j][k] = newNum
                     else:
                         weightsProb = random.randrange(1, 11)
@@ -192,7 +192,7 @@ class NeuralNetwork():
             for j in range(0, self.networkLayout.hiddenLayerThreeSize):
                 mutateProbBias = random.randrange(1, MUTATE_PERCENTAGE)
                 if mutateProbBias == 1:
-                    newNum = np.random.uniform(-2.5, 2.5, 1)[0]
+                    newNum = np.random.uniform(-2, 2, 1)[0]
                     biasesThree.append(newNum)
                 else:
                     biasProb = random.randrange(1, 11)
@@ -204,7 +204,7 @@ class NeuralNetwork():
                 for k in range(0, self.networkLayout.hiddenLayerTwoSize):
                     mutateProbWeight = random.randrange(1, MUTATE_PERCENTAGE)
                     if mutateProbWeight == 1:
-                        newNum = np.random.uniform(-2.5, 2.5, 1)[0]
+                        newNum = np.random.uniform(-2, 2, 1)[0]
                         weightsThree[j][k] = newNum
                     else:
                         weightsProb = random.randrange(1, 11)
@@ -218,7 +218,7 @@ class NeuralNetwork():
             for j in range(0, self.networkLayout.outputLayerSize):
                 mutateProbBias = random.randrange(1, MUTATE_PERCENTAGE)
                 if mutateProbBias == 1:
-                    newNum = np.random.uniform(-2.5, 2.5, 1)[0]
+                    newNum = np.random.uniform(-2, 2, 1)[0]
                     biasesFour.append(newNum)
                 else:
                     biasProb = random.randrange(1, 11)
@@ -230,7 +230,7 @@ class NeuralNetwork():
                 for k in range(0, self.networkLayout.hiddenLayerThreeSize):
                     mutateProbWeight = random.randrange(1, MUTATE_PERCENTAGE)
                     if mutateProbWeight == 1:
-                        newNum = np.random.uniform(-2.5, 2.5, 1)[0]
+                        newNum = np.random.uniform(-2, 2, 1)[0]
                         weightsFour[j][k] = newNum
                     else:
                         weightsProb = random.randrange(1, 11)
